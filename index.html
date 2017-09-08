@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!---------------------------------------------------------------------------->
+
+<head>
+
+  <meta charset="utf-8">
+  <title>codeBoot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="include/bootstrap-4.0.0-beta-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="include/CodeMirror/lib/codemirror.css">
+  <link rel="stylesheet" href="include/codeboot.css">
+
+</head>
+
+<!---------------------------------------------------------------------------->
+
+<body data-lang-level="novice" onunload="zzzcb.unload();">
+
+<div id="codeboot-header"></div>
+
+<nav class="navbar fixed-top">
+
+  <div id="navbar-header"></div>
+
+  <div id="navbar-footer">
+
+    <div id="menu">
+
+      <span id="menu-brand">
+        <button class="btn btn-secondary" type="button" id="menu-brand-btn" data-toggle="modal" data-target="#about-box">codeBoot v2.0</button>
+      </span>
+
+      <span id="menu-file" class="dropdown">
+        <button class="btn btn-secondary" type="button" id="menu-file-btn" data-toggle="dropdown">File</button>
+        <div id="file-list" class="dropdown-menu">
+          <a class="dropdown-item" href="#"><strong>New</strong></a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">sample/hello.js</a>
+          <a class="dropdown-item" href="#">sample/foo.js</a>
+        </div>
+      </span>
+
+      <span id="menu-settings" class="dropdown">
+        <button class="btn btn-secondary" type="button" id="menu-settings-btn" data-toggle="dropdown">Settings</button>
+        <div class="dropdown-menu">
+
+          <h5 class="dropdown-header">Language level</h5>
+          <a href="#" data-value="novice" data-radio-group="lang-level" tabIndex="-1" class="dropdown-item"><input type="checkbox"/>&nbsp;Novice</a>
+          <a href="#" data-value="standard" data-radio-group="lang-level" tabIndex="-1" class="dropdown-item"><input type="checkbox"/>&nbsp;Standard</a>
+
+          <div class="dropdown-divider"></div>
+          <h5 class="dropdown-header">Animation speed</h5>
+          <a href="#" data-value="slow" data-radio-group="exec-speed" tabIndex="-1" class="dropdown-item"><input type="checkbox"/>&nbsp;Slow</a>
+          <a href="#" data-value="normal" data-radio-group="exec-speed" tabIndex="-1" class="dropdown-item"><input type="checkbox"/>&nbsp;Normal</a>
+          <a href="#" data-value="fast" data-radio-group="exec-speed" tabIndex="-1" class="dropdown-item"><input type="checkbox"/>&nbsp;Fast</a>
+          <a href="#" data-value="turbo" data-radio-group="exec-speed" tabIndex="-1" class="dropdown-item"><input type="checkbox"/>&nbsp;Turbo</a>
+
+          <div class="dropdown-divider"></div>
+          <h5 class="dropdown-header">Editing</h5>
+          <a href="#" data-toggle="checkbox" tabIndex="-1" class="dropdown-item"><input type="checkbox"/>&nbsp;Show line numbers</a>
+
+          <div class="dropdown-divider"></div>
+          <h5 class="dropdown-header">Graphics</h5>
+          <a href="#" data-toggle="checkbox" tabIndex="-1" class="dropdown-item"><input type="checkbox"/>&nbsp;Show drawing window</a>
+          <a href="#" onclick="cb.exportDrawingWindow();" class="dropdown-item">Export drawing window</a>
+
+  <a href="#" data-toggle="radio" type="radio" name="optradio" class="dropdown-item">Option 1</a>
+  <a href="#" data-toggle="radio" type="radio" name="optradio" class="dropdown-item">Option 2</a>
+
+        </div>
+      </span>
+
+    </div>
+
+    <div id="exec-controls">
+
+      <div id="exec-controls-counter">
+        <span id="exec-step-counter" class="badge badge-primary badge-pill step-counter"></span>
+      </div>
+
+      <div id="exec-controls-buttons" class="btn-group" role="group">
+
+        <label id="exec-btn-step" type="button" class="btn btn-sm btn-secondary" onclick="cb.eventStep();">
+          <img id="exec-img-play-1" src="include/img/play-1.png"></img>
+          <img id="exec-img-pause" src="include/img/pause.png"></img>
+          <img id="exec-img-play-pause" src="include/img/play-pause.png"></img>
+        </label>
+
+        <label id="exec-btn-animate" type="button" class="btn btn-sm btn-secondary" onclick="cb.eventAnimate();">
+          <img id="exec-img-play" src="include/img/play.png"></img>
+        </label>
+
+        <label id="exec-btn-eval" type="button" class="btn btn-sm btn-secondary" onclick="cb.eventEval();">
+          <img id="exec-img-play-inf" src="include/img/play-inf.png"></img>
+        </label>
+
+        <label id="exec-btn-stop" type="button" class="btn btn-sm btn-secondary" onclick="cb.eventStop();">
+          <img id="exec-img-stop" src="include/img/stop.png"></img>
+        </label>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</nav>
+
+<!---------------------------------------------------------------------------->
+
+<!-- fake body above console -->
+
+<div id="b"></div>
+
+<!---------------------------------------------------------------------------->
+
+<!-- Console -->
+
+<div id="console">
+
+  <div id="repl">
+    <div id="repl-transcript"></div>
+    <div id="repl-input"></div>
+  </div>
+
+  <div id="drawing-window"></div>
+
+</div>
+
+<!---------------------------------------------------------------------------->
+
+<!-- Editors -->
+
+<div id="editors"></div>
+
+<!---------------------------------------------------------------------------->
+
+<div id="about-box" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">About codeBoot</h4>
+      </div>
+      <div class="modal-body">
+        <p>codeBoot is developped by Marc Feeley and Bruno Dufour using the following components:</p>
+        <ul>
+          <li><a href="http://github.com/twbs/bootstrap" target="_blank">Bootstrap</a></li>
+          <li><a href="http://jquery.com/" target="_blank">jQuery</a></li>
+          <li><a href="http://codemirror.net/" target="_blank">CodeMirror</a></li>
+        </ul>
+        <p>The code is freely <a href="https://github.com/feeley/codeboot" target="_blank">available on Github</a>. Feel free
+          to <a href="https://github.com/feeley/codeboot/issues/new" target="_blank">report issues</a> or contribute.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!---------------------------------------------------------------------------->
+
+<!-- Load JavaScript code last -->
+
+<script src="include/jquery-3.2.1.min.js"></script>
+<script src="include/popper-1.11.0.min.js"></script>
+<script src="include/bootstrap-4.0.0-beta-dist/js/bootstrap.min.js"></script>
+
+<script src="include/CodeMirror/lib/codemirror.js"></script>
+<script src="include/CodeMirror/addon/edit/matchbrackets.js"></script>
+<script src="include/CodeMirror/addon/comment/continuecomment.js"></script>
+<script src="include/CodeMirror/addon/comment/comment.js"></script>
+<script src="include/CodeMirror/mode/javascript/javascript.js"></script>
+
+<script src="include/jseval/system.js"></script>
+<script src="include/jseval/num.js"></script>
+<script src="include/jseval/scanner.js"></script>
+<script src="include/jseval/parser.js"></script>
+<script src="include/jseval/pp.js"></script>
+<script src="include/jseval/ast-passes.js"></script>
+<script src="include/jseval/eval.js"></script>
+
+<script src="include/codeboot.js"></script>
+<script src="include/drawing.js"></script>
+<script src="include/actions.js"></script>
+<script src="include/editors.js"></script>
+<script src="include/builtins.js"></script>
+<script src="include/fs.js"></script>
+<script src="include/storage.js"></script>
+<script src="include/tutorial.js"></script>
+<script src="include/output.js"></script>
+<script src="include/jquery.clippy.min.js"></script>
+<script src="include/jquery.visibility.js"></script>
+<script src="include/quiz.js"></script>
+<script>cb.query(null);</script>
+
+</body>
+
+</html>

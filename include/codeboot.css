@@ -1,0 +1,831 @@
+.navbar {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#navbar-header {
+    width: 100%;
+    height: 200px;
+    padding: 10px 10px 10px 10px;
+    background-color: #F9EA99;
+    display: none;
+}
+
+#navbar-footer {
+    width: 100%;
+    padding: 10px 10px 10px 10px;
+}
+
+body {
+    padding-top: 54px;
+}
+
+body[data-theme="quiz"] {
+    padding-top: 254px;
+}
+
+body[data-theme="quiz"] #navbar-header {
+    display: inline;
+}
+
+#exec-controls-counter {
+    display: inline-block;
+}
+
+#exec-controls button {
+  height: 40px;
+}
+
+#exec-btn-step,
+#exec-btn-animate,
+#exec-btn-eval,
+#exec-btn-stop {
+  width: 48px;
+}
+
+#exec-img-play-pause,
+#exec-img-play-1,
+#exec-img-pause,
+#exec-img-play,
+#exec-img-play-inf,
+#exec-img-stop {
+  height: 22px;
+  margin: 2px 0 4px 0;
+}
+
+#exec-img-play-1,
+#exec-img-pause {
+  display: none;
+}
+
+.btn-secondary {
+  color: #000000;
+  background-color: #fefefe;
+  border-color: #c0c0c0;
+}
+
+.btn-secondary:hover {
+  color: #292b2c;
+  background-color: #f0f0f0;
+  border-color: #c0c0c0;
+}
+
+.btn-secondary:focus, .btn-secondary.focus {
+  -webkit-box-shadow: 0 0 0 2px rgba(204, 204, 204, 0.5);
+          box-shadow: 0 0 0 2px rgba(204, 204, 204, 0.5);
+}
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+  background-color: #e0e0e0;
+  border-color: #c0c0c0;
+}
+
+.btn-secondary:active, .btn-secondary.active,
+.show > .btn-secondary.dropdown-toggle {
+  color: #292b2c;
+  background-color: #e6e6e6;
+  background-image: none;
+  border-color: #adadad;
+}
+
+.btn.disabled, .btn:disabled {
+  color: #a0a0a0;
+  opacity: 0.85;
+}
+
+#menu {
+}
+
+#menu-brand-btn,
+#menu-file-btn,
+#menu-settings-btn,
+#menu-help-btn {
+  font-weight: bold;
+  color: #fefefe;
+  transform: translate(0, 8px);
+  margin: -10px 0 0 0;
+}
+
+#menu-brand-btn {
+  font-size: 140%;
+}
+
+#menu-file-btn,
+#menu-settings-btn,
+#menu-help-btn {
+  font-size: 110%;
+}
+
+#menu-help-btn {
+  display: none;
+}
+
+
+
+#menu button {
+  background-color: transparent;
+  border: none;
+  overflow: hidden;
+  outline: none;
+}
+
+#menu button:hover {
+  color: #292b2c;
+  background-color: #f0f0f0;
+}
+
+#menu {
+  float: left;
+}
+
+#exec-controls {
+  float: right;
+}
+
+#exec-step-counter {
+    display: none;
+}
+
+.step-counter {
+    font-family: Helvetica;
+    font-size: 12px;
+    margin: 5px 0 5px 0;
+}
+
+.delete-btn {
+    flex: 0 0 17px;
+    margin: 0 0 0 60px;
+}
+
+.file-name {
+    flex: 1 1 auto;
+}
+
+.file-item {
+    display: flex;
+}
+
+
+
+
+
+
+
+
+/* ----- Layout ----- */
+
+.rename-box {
+	margin: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+.row {
+    margin-left: 0; /* Somehow, Bootstrap uses a negative margin for rows that makes our contents extend too far to the left. */
+    padding: 0 10px;
+}
+
+.tooltip.tryme .tooltip-inner {
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    border: 3px solid #FEE310;
+    background-color: #FEF1B8;
+}
+
+.tooltip.tryme .tooltip-arrow {
+    /* We know only the left placement is used, so don't bother making this more general right now */
+    border-left-color: #FEE310;
+}
+
+#openFileModal input {
+    -webkit-box-shadow: none;
+       -moz-box-shadow: none;
+            box-shadow: none;
+    line-height: 0;
+}
+
+/* ----- Menus ----- */
+
+.dropdown-align-right {
+    left: auto;
+    right: 0; /* Display file list menu to the left of the button to avoid extending outside the page */
+}
+
+.dropdown-btns-only {
+	min-width: 60px;
+}
+
+/* ----- Toolbars ----- */
+
+.btn-toolbar {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Support nested button groups in toolbars */
+
+.btn-toolbar > .btn-group > .btn-group {
+	margin-left: -1px;
+}
+
+.btn-toolbar > .btn-group > .btn-group > .btn {
+	-webkit-border-radius: 0px;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+}
+
+.btn-toolbar > .btn-group > .btn-group:first-child > .btn {
+	-webkit-border-bottom-left-radius: 4px;
+	    -moz-border-radius-bottomleft: 4px;
+            border-bottom-left-radius: 4px;
+    -webkit-border-top-left-radius: 4px;
+        -moz-border-radius-topleft: 4px;
+            border-top-left-radius: 4px;
+}
+
+.btn-toolbar > .btn-group > .btn-group:last-child > .btn {
+	-webkit-border-bottom-right-radius: 4px;
+	    -moz-border-radius-bottomright: 4px;
+            border-bottom-right-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+        -moz-border-radius-topright: 4px;
+            border-top-right-radius: 4px;
+}
+
+.btn-group > .btn-group + .btn {
+    /* A button immediately following an inline btn-group should not leave a gap */
+	margin-left: -1px;
+}
+
+.navbar .btn-group .btn {
+	margin-left: -1px; /* Fix group layout in navbar */
+}
+
+.nav-tabs .btn-group:first-child {
+    margin-left: 5px;
+}
+
+.nav-tabs > li > .btn-toolbar,
+.row > .btn-toolbar.pull-right {
+    margin-top: 3px;
+}
+
+/* ----- Tabs ----- */
+
+.nav-tabs {
+  margin-bottom: 0;
+}
+
+.tab-content {
+  position: relative;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  -webkit-border-bottom-right-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+     -moz-border-radius-bottomright: 4px;
+     -moz-border-radius-bottomleft: 4px;
+          border-bottom-right-radius: 4px;
+          border-bottom-left-radius: 4px;
+
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-top-left-radius: 0;
+     -moz-border-radius-topright: 0;
+     -moz-border-radius-topleft: 0;
+          border-top-right-radius: 0;
+          border-top-left-radius: 0;
+
+  margin-top: -1px;
+}
+
+div.tab-content,
+pre.tab-content,
+#zzzrepl {
+	margin-bottom: 20px;
+}
+
+div.tab-pane {
+	padding: 10px;
+}
+
+.nav-tabs button.close,
+.popover-title > span > button.close {
+  margin: -3px -8px 0 0;
+  padding-left: 8px;
+}
+
+.nav-tabs .dropdown-toggle .caret,
+.nav-tabs .dropdown-toggle:hover .caret {
+  /* Restore caret colours for file editor toolbars */
+  border-top-color: black;
+  border-bottom-color: black;
+}
+
+.navbar .btn-group {
+    background-color: white; /* Need to show disabled buttons properly */
+    -webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+            border-radius: 4px;
+
+    -webkit-background-clip: padding-box;
+       -moz-background-clip: padding;
+            background-clip: padding-box;
+}
+
+/* ----- Editors ----- */
+
+.CodeMirror {
+    font-size: 20px;
+    line-height: 22px;
+}
+
+/* Console should be 1 line high */
+#repl .CodeMirror {
+  height: 100%;
+  padding: 0 10px 0 10px;
+  margin: 0;
+}
+
+.CodeMirror-lines {
+  padding: 0;
+  margin: 0;
+}
+
+pre.CodeMirror-line {
+  padding: 0;
+  margin: 0;
+}
+
+/* block cursor */
+
+.CodeMirror-cursor {
+  width: auto;
+  border: 0 !important;
+  background: rgba(0,0,0,0.3);
+}
+
+#repl.busy .CodeMirror-cursor {
+    display: none !important;
+}
+
+#zzzrepl CodeMirror {
+  height: 1.5em;
+}
+
+
+
+.tab-content.file-editor {
+  margin-bottom: 20px;
+}
+
+.file-editor .CodeMirror {
+  position: relative;
+  height: 300px;
+}
+
+.file-editor,
+.file-editor .CodeMirror-scroll,
+.file-editor .CodeMirror-gutters {
+    background-color: #fafafa;
+}
+
+.CodeMirror-gutter-text {
+  color: #bebec5;
+}
+
+.CodeMirror-gutter-text pre {
+  color: #9c9ca4;
+}
+
+.CodeMirror-matchingbracket {
+  color: #46a546 !important; /* Bootstrap accent - green */
+}
+
+.CodeMirror-nonmatchingbracket {
+  color: #f89406 !important; /* Bootstrap accent - orange */
+}
+
+.ui-resizable-s {
+    height: 7px;
+    bottom: 0;
+    background: transparent url('icons/resize_handle_corner.png') no-repeat top right;
+}
+
+.ui-resizable-handle {
+    z-index: 1009; /* Just below bubbles */
+}
+
+#floating-console {
+    background-color: transparent;
+    position: relative;
+    z-index: 200;
+}
+
+#editors-shadow {
+    width: auto;
+    margin: 0 10px;
+    height: 10px;
+    background: transparent url("icons/shadow.png") repeat-x top left;
+}
+
+#editors_now_disabled {
+    position: absolute;
+    top: 160px;
+    left: 55px;
+    right: 55px;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+/* ----- Pseudo-body for DOM experimentation ----- */
+
+#b table {
+    float: left;
+}
+
+#b td {
+    table-layout: fixed;
+    width: 70px;
+    height: 98px;
+    text-align: center;
+    vertical-align: middle;
+    font-family: Helvetica;
+    font-size: 24px;
+}
+
+#b img {
+    vertical-align: middle;
+    width: 100%;
+}
+
+/* ----- Drawing window ----- */
+
+#drawing-window {
+    float: right;
+}
+
+/* ----- Console ----- */
+
+#repl {
+    margin: 15px 15px 15px 15px;
+    padding: 10px 0 10px 0;
+    border-radius: 4px;
+}
+
+body[data-lang-level="novice"] #repl {
+    border: 0px solid #49afcd;
+    background-color: #EDF7FA;
+}
+
+body[data-lang-level="novice"][data-has-transcript="true"] #repl-input {
+    border-top: 1px solid #e0e0e0;
+}
+
+body[data-lang-level="novice"] nav {
+  background-color: #7DB6D5;
+}
+
+body[data-lang-level="standard"] #repl {
+    border: 0px solid #da4f49;
+    background-color: #fdf6f6;
+}
+
+body[data-lang-level="standard"][data-has-transcript="true"] #repl-input {
+    border-top: 1px solid #e0e0e0;
+}
+
+body[data-lang-level="standard"] nav {
+  background-color: #E7A555;
+}
+
+#repl-transcript,
+#repl-input {
+}
+
+#repl-transcript {
+    width: 100%;
+    display: none;
+}
+
+#repl-transcript .CodeMirror-scroll {
+    max-height: 9em;
+}
+
+#repl-input {
+    width: 100%;
+    padding: none;
+    border: none;
+    margin-top: -1px;
+    border-top: 1px solid transparent;
+    background-color: transparent;
+}
+
+.CodeMirror,
+.CodeMirror-gutters {
+    background-color: transparent;
+}
+
+.CodeMirror-gutters {
+    border-right: 0;
+}
+
+.cb-prompt {
+    /* CodeMirror gutter class for the prompt */
+    width: 1em;
+}
+
+
+
+#console {
+    display: flex;
+    zzzflex-flow: row nowrap;
+}
+
+#repl {
+    min-width: 250px;
+    flex: 1 1 auto;
+    align-self: flex-start;
+}
+
+#drawing-window {
+    display: none;
+    flex: 0 0 366px;
+    padding: 15px 15px 15px 0;
+    margin: 0;
+}
+
+
+.file-editor {
+    margin: 15px 15px 15px 15px;
+    padding: 0;
+    background-color: transparent;
+}
+
+.file-editor-content {
+    border: 1px solid #e0e0e0;
+}
+    
+.file-editor-content .CodeMirror-scroll {
+    padding: 10px;
+}
+
+
+
+
+
+
+
+#repl-span2 {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    zzzwidth: 90%;
+}
+
+#drawing-span2 {
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+
+
+
+
+
+
+
+.cont {
+    display: flex;
+    margin: 15px 15px 15px 15px;
+    padding: 10px 0 10px 0;
+    border-radius: 4px;
+    background-color: gray;
+}
+
+.cons {
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-flow: row wrap;
+    background-color: red;
+    white-space: wrap;
+}
+
+.cons-transcript {
+    overflow: auto;
+    background-color: pink;
+}
+
+.cons-input {
+    background-color: green;
+}
+
+.draw1 {
+    background-color: purple;
+}
+
+.draw2 {
+    display: none;
+    background-color: purple;
+}
+
+.draw-window {
+    background-color: blue;
+}
+
+
+
+zzzbody {
+        background-color: gray;
+}
+
+
+#zzzrepl {
+    width: 100%;
+}
+
+
+
+
+
+
+
+.console-line {
+  padding-left: 14px;
+}
+
+.console-output {
+  padding-left: 14px;
+}
+
+.console-result {
+  padding-left: 14px;
+  margin-left: 14px;
+}
+
+.console-error {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 14px;
+}
+
+/* ----- Value bubbles ----- */
+
+.popover {
+    width: auto !important;
+    min-width: 200px;
+}
+
+/* ----- Source code highlighting ----- */
+
+.exec-point-code {
+/*  border: 1px solid #aaa;*/
+  font-size: 20px;
+  background-color: yellow;
+}
+
+.value-bubble {
+    background-color: yellow;
+}
+
+.value-bubble .popover-title {
+    font-size: 20px;
+    padding: 0 10px 0 10px;
+    margin: 1px;
+}
+
+.value-bubble.has-content .popover-title {
+    border-bottom: 1px solid #ccc;
+}
+
+.value-bubble .popover-content {
+    font-size: 18px;
+    padding: 0 10px 0 10px;
+}
+
+.value-bubble.bs-popover-bottom .arrow::after, .value-bubble.bs-popover-auto[x-placement^="bottom"] .arrow::after {
+  border-bottom-color: yellow;
+}
+
+/*
+.popover.value-bubble {
+    left: -25px !important;
+}
+
+.popover.value-bubble .arrow {
+    left: 7% !important;
+}
+*/
+
+.cb-code-font {
+    font-family: Courier;
+    font-weight: bold;
+}
+
+
+#navbar-step-counter {
+    display: none; /* initially hidden */
+    margin: 0 10px 0 0;
+}
+
+body[data-lang-level="novice"] .error-code {
+/*  border: 1px solid #aaa;*/
+  background-color: pink;
+}
+
+body[data-lang-level="standard"] .error-code {
+  background-color: #EB9E9B;
+}
+
+.error-message {
+  font-family: times;
+  font-style: italic;
+}
+
+.exec-lbl-count {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.float-right {
+  float: right;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.font2 {
+font-size: 100%;
+letter-spacing: 0.1ex;
+}
+
+.font3 {
+font-size: 50%;
+vertical-align: super;
+}
+
+.font5 {
+font-size: 50%;
+vertical-align: super;
+letter-spacing: 0.1ex;
+}
+
+.play-pause {
+}
+
+
+.symbol-stop {
+font-size: 125%;
+position: relative;
+top: 0.06ex;
+}
+
+.symbol-play,
+.symbol-play-inf,
+.symbol-play-1,
+.symbol-play-pause {
+}
+
+.symbol-pause,
+.symbol-play-pause > sup {
+letter-spacing: 0.2ex;
+}
+
+.symbol-plus,
+.symbol-gear,
+.symbol-play,
+.symbol-pause,
+.symbol-stop,
+.symbol-play-inf,
+.symbol-play-1,
+.symbol-play-pause {
+width: 22px;
+display: inline-block;
+}
+
+
+#exec-btn-step:disabled > img,
+#exec-btn-animate:disabled > img,
+#exec-btn-eval:disabled > img,
+#exec-btn-stop:disabled > img {
+    opacity: 0.1;
+    background-color: white;
+}
+
+#exec-btn-step:disabled,
+#exec-btn-animate:disabled,
+#exec-btn-eval:disabled,
+#exec-btn-stop:disabled {
+    background-color: transparent;
+}
+
