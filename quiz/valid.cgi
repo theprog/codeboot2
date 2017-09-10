@@ -11,14 +11,14 @@ do
     declare post_${parm[i]}=${parm[i+1]}
 done
 
-post_quiz=$(echo "$post_quiz" | sed 's/[^a-zA-Z0-9_]//g')
-post_q=$(echo "$post_q" | sed 's/[^a-zA-Z0-9_]//g')
-post_student=$(echo "$post_student" | sed 's/[^a-zA-Z0-9_]//g')
+post_quiz=$(echo "$post_quiz" | ./urldecode.py | sed 's/[^a-zA-Z0-9_]//g')
+post_q=$(echo "$post_q" | ./urldecode.py | sed 's/[^a-zA-Z0-9_]//g')
+post_student=$(echo "$post_student" | ./urldecode.py | sed 's/[^a-zA-Z0-9_ ]//g')
 
 echo "Content-Type: text/plain"
 echo ""
 
-answer=$(echo $post_answer | sed 's/%3D/=/g' | base64 -d)
+answer=$(echo $post_answer | ./urldecode.py | base64 -d)
 
 if test -e quiz/$post_quiz/$post_q/correct.sh
 then
