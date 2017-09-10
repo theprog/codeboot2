@@ -29,8 +29,8 @@ CodeBoot.prototype.getStudentName = function () {
 
 
 CodeBoot.prototype.currentQuiz = "exercice1";
-CodeBoot.prototype.quizQuestions = ['a', 'b', 'c', 'd', 'e', 'f'];
-CodeBoot.prototype.quizAnswers = [false,false,false,false,false,false];
+CodeBoot.prototype.quizQuestions = [];
+CodeBoot.prototype.quizAnswers = [];
 CodeBoot.prototype.currentQuestion = 0;
 
 
@@ -78,14 +78,6 @@ CodeBoot.prototype.nextQuestion = function() {
 };
 
 CodeBoot.prototype.submitAnswer = function() {
-    // See : https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
-    var b64EncodeUnicode = function(str) {
-        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-            function toSolidBytes(match, p1) {
-                return String.fromCharCode('0x' + p1);
-            }));
-    }
-
     var q = cb.quizQuestions[cb.currentQuestion];
 
     $('#quiz-input').focus();
@@ -94,7 +86,7 @@ CodeBoot.prototype.submitAnswer = function() {
         quiz: cb.currentQuiz,
         q: q,
         student: cb.getStudentName(),
-        answer: b64EncodeUnicode($('#quiz-input').val())
+        answer: $('#quiz-input').val()
     }, function(data) {
         var ok = data.trim() === '1';
         if(ok) {
@@ -114,10 +106,12 @@ CodeBoot.prototype.submitAnswer = function() {
     }, "text");
 };
 
-CodeBoot.prototype.installQuiz = function (name) {
+CodeBoot.prototype.setupQuiz = function (name) {
 
     // Setup HTML
     var studentName = cb.getStudentName();
+
+    cb.currentQuiz = name;
 
     var quiz = $(quizHTML);
 
@@ -125,46 +119,77 @@ CodeBoot.prototype.installQuiz = function (name) {
         $('#quiz-title', quiz).text(data);
     });
 
-    var questions = cb.quizQuestions.map(function(question, i) {
-        var q = $(questionHTML);
+    // Load questions
+    $.get('quiz/questions.cgi', {
+        quiz: name
+    }, function(data) {
+        cb.quizQuestions = data.trim().split('\n');
 
-        q.attr('id', 'question-' + i);
+        cb.quizAnswers = cb.quizQuestions.map(function() { return false });
 
-        $('input', q).attr('value', i);
+        cb.quizQuestions.forEach(function(question, i) {
+            var q = $(questionHTML);
 
-        $('.title', q).text(question);
+            q.attr('id', 'question-' + i);
 
-        if(i === 0) {
-            $('input', q).prop('checked', true);
-            q.addClass('active');
-        }
+            $('input', q).attr('value', i);
 
-        return q[0].outerHTML;
-    }).join('');
+            $('.title', q).text(question);
 
-    $('#quiz-question-choice', quiz)
-        .html(questions);
+            if(i === 0) {
+                $('input', q).prop('checked', true);
+                q.addClass('active');
+            }
 
-    $(document).on('change', 'input:radio[name=current-quiz-question]', function (event) {
-        cb.loadQuestion(+$(this).val());
+            $('#quiz-question-choice', quiz).append(q);
+        })
+
+        $(document).on('change', 'input:radio[name=current-quiz-question]', function (event) {
+            cb.loadQuestion(+$(this).val());
+        });
+
+        $("body").attr("data-theme", "quiz");
+
+        $("#navbar-header").html(quiz);
+
+        $("#quiz-student-name").text("pour " + studentName);
+
+        $('#quiz-form').submit(function() {
+            cb.submitAnswer();
+            return false;
+        });
+
+        $('#quiz-pass').click(function() {
+            cb.nextQuestion();
+        });
+        // Load the first question
+        cb.loadCurrentQuestion();
     });
-
-    $("body").attr("data-theme", "quiz");
-
-    $("#navbar-header").html(quiz);
-
-    $("#quiz-student-name").text("pour " + studentName);
-
-    $('#quiz-form').submit(function() {
-        cb.submitAnswer();
-        return false;
-    });
-
-    $('#quiz-pass').click(function() {
-        cb.nextQuestion();
-    });
-    // Load the first question
-    cb.loadCurrentQuestion();
 };
 
-cb.installQuiz('exercice1');
+
+CodeBoot.prototype.closeQuiz = function () {
+    $("#navbar-header").html('');
+    $("body").attr("data-theme", "");
+};
+
+CodeBoot.prototype.installQuiz = function() {
+    // Load questions
+    $.get('quiz/list.cgi', {}, function(data) {
+        data.trim().split('\n').forEach(function(name) {
+            var element = $('<a class="dropdown-item" href="#"></a>');
+
+            element.click(function() {
+                cb.setupQuiz(name);
+            });
+
+            $.get('quiz/quiz/' + name + '/title', {}, function(data) {
+                element.text(data);
+            });
+
+            $('#quiz-list').append(element);
+        });
+    });
+};
+
+cb.installQuiz();
