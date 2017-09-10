@@ -34,7 +34,6 @@ CodeBoot.prototype.quizAnswers = [false,false,false,false,false,false];
 CodeBoot.prototype.currentQuestion = 0;
 
 
-
 CodeBoot.prototype.loadCurrentQuestion = function() {
     var q = cb.quizQuestions[cb.currentQuestion];
     $.get('quiz/ask.cgi', {
@@ -44,6 +43,8 @@ CodeBoot.prototype.loadCurrentQuestion = function() {
     }, function(data) {
         $('#quiz-current-question').text(q + ': ' + data);
     }, "text");
+
+    $('#quiz-input').val(cb.quizAnswers[cb.currentQuestion] || '');
 };
 
 CodeBoot.prototype.loadQuestion = function(n) {
