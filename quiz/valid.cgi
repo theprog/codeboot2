@@ -22,6 +22,7 @@ answer=$(echo $post_answer | ./urldecode.py | base64 -d)
 
 if test -e quiz/$post_quiz/$post_q/correct.sh
 then
-    cd quiz/$post_quiz/$post_q/
-    ./correct.sh "$post_student" "$answer"
+    ans=$(cd quiz/$post_quiz/$post_q/; ./correct.sh "$post_student" "$answer")
+    echo "$post_q" $ans "$answer" >> answers/$post_quiz/"$post_student"
+    echo "$ans"
 fi
