@@ -1,3 +1,63 @@
+/*---------------------------------------------------------------------------*/
+
+/* Get student and document information from Studium */
+
+function stringToDict(str, sep) {
+
+    var cookies = str.split(sep);
+
+    result = {};
+
+    for (i=cookies.length-1; i>=0; i--) {
+        var x = cookies[i].split('=');
+        result[x[0]] = x[1];
+    }
+
+    return result;
+}
+
+function getDocumentTitle() {
+    /* Works when running in Studium inline page */
+    return window.parent.document.title;
+}
+
+function getStudentName() {
+    /* Works when running in Studium inline page */
+    var doc = window.parent.document;
+    var logininfo = doc.getElementsByClassName('logininfo');
+    if (logininfo.length >= 1) {
+        var info = logininfo[0];
+        var link = info.querySelector('a');
+        if (link) {
+            return link.innerText;
+        }
+    }
+    return null;
+}
+
+function getContextInfo() {
+    /* Works when running in Studium inline page */
+    var id = null;
+    var lastAccess = null;
+    var docCookie = document.cookie;
+    if (typeof docCookie === 'string') {
+        var cookies = stringToDict(docCookie, '; ');
+        var session = cookies['UM_SESSION'];
+        if (typeof session === 'string') {
+            var UM_SESSION = stringToDict(decodeURIComponent(session), '|');
+            id = UM_SESSION['id'];
+            lastAccess = UM_SESSION['dernierAcces'];
+        }
+    }
+    return { name: getStudentName(),
+             id: id,
+             lastAccess: lastAccess,
+             title: getDocumentTitle()
+           };
+}
+
+/*---------------------------------------------------------------------------*/
+
 var quizHTML = '<div id="cb-quiz" class="d-flex justify-content-between">\
 <div><div><h2 id="quiz-title"></h2></div><div><h5><span id="quiz-student-name"><span></h5></div></div>\
   <div id="cb-quiz-question-choice" class="btn-group" data-toggle="buttons">\
@@ -21,10 +81,18 @@ var quizHTML = '<div id="cb-quiz" class="d-flex justify-content-between">\
 </form>\
 </div>';
 
+var quizMenuHTML = '\
+      <span id="cb-menu-quiz" class="dropdown">\
+          <button class="btn btn-secondary" type="button" id="cb-menu-quiz-btn" data-toggle="dropdown">Quiz</button>\
+          <div id="cb-quiz-list" class="dropdown-menu">\
+          </div>\
+      </span>\
+';
+
 var questionHTML = '<label class="btn btn-secondary"><input type="radio" name="cb-current-quiz-question"><div class="title h4"></div><div class="state h2">&nbsp;</div></label>'
 
 CodeBoot.prototype.getStudentName = function () {
-    return "Annie Brocolli";
+    return cb.contextInfo.name;
 };
 
 
@@ -36,7 +104,7 @@ CodeBoot.prototype.currentQuestion = 0;
 
 CodeBoot.prototype.loadCurrentQuestion = function() {
     var q = cb.quizQuestions[cb.currentQuestion];
-    $.get('quiz/ask.cgi', {
+    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/ask.cgi', {
         quiz: cb.currentQuiz,
         q: q,
         student: cb.getStudentName()
@@ -82,7 +150,7 @@ CodeBoot.prototype.submitAnswer = function() {
 
     $('#cb-quiz-input').focus();
 
-    $.get('quiz/valid.cgi', {
+    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/valid.cgi', {
         quiz: cb.currentQuiz,
         q: q,
         student: cb.getStudentName(),
@@ -115,12 +183,12 @@ CodeBoot.prototype.setupQuiz = function (name) {
 
     var quiz = $(quizHTML);
 
-    $.get('quiz/quiz/' + name + '/title', {}, function(data) {
+    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/quiz/' + name + '/title', {}, function(data) {
         $('#quiz-title', quiz).text(data);
     });
 
     // Load questions
-    $.get('quiz/questions.cgi', {
+    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/questions.cgi', {
         quiz: name
     }, function(data) {
         cb.quizQuestions = data.trim().split('\n');
@@ -174,8 +242,16 @@ CodeBoot.prototype.closeQuiz = function () {
 };
 
 CodeBoot.prototype.installQuiz = function() {
+
+    cb.contextInfo = getContextInfo();
+
+    // Add quiz menu
+    var quizMenu = document.createElement('span');
+    quizMenu.innerHTML = quizMenuHTML;
+    document.getElementById('cb-menu').appendChild(quizMenu); 
+
     // Load questions
-    $.get('quiz/list.cgi', {}, function(data) {
+    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/list.cgi', {}, function(data) {
         data.trim().split('\n').forEach(function(name) {
             var element = $('<a class="dropdown-item" href="#"></a>');
 
@@ -183,7 +259,7 @@ CodeBoot.prototype.installQuiz = function() {
                 cb.setupQuiz(name);
             });
 
-            $.get('quiz/quiz/' + name + '/title', {}, function(data) {
+            $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/quiz/' + name + '/title', {}, function(data) {
                 element.text(data);
             });
 

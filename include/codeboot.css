@@ -123,7 +123,8 @@ body[data-cb-theme="quiz"] #cb-navbar-header {
 #cb-menu-brand-btn,
 #cb-menu-file-btn,
 #cb-menu-settings-btn,
-#cb-menu-help-btn {
+#cb-menu-help-btn,
+#cb-menu-quiz-btn {
   font-weight: bold;
   color: #fefefe;
   transform: translate(0, 8px);
@@ -136,11 +137,11 @@ body[data-cb-theme="quiz"] #cb-navbar-header {
 
 #cb-menu-file-btn,
 #cb-menu-settings-btn,
-#cb-menu-help-btn {
+#cb-menu-help-btn,
+#cb-menu-quiz-btn {
   font-size: 110%;
 }
 
-#cb-menu-quiz-btn,
 #cb-menu-file-btn,
 #cb-menu-settings-btn,
 #cb-menu-help-btn {
