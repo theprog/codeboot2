@@ -329,7 +329,7 @@ CodeBoot.prototype.installQuiz = function() {
     });
 */
 
-    setupQuiz('exercice1');
+    cb.setupQuiz('exercice1');
 };
 
 cb.installQuiz();
