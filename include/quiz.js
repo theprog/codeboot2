@@ -145,7 +145,7 @@ CodeBoot.prototype.nextQuestion = function() {
 
     // Search from the start
     if(n === -1)
-        n = cb.quizAnswers.indexOf(false, (cb.currentQuestion + 1) % cb.quizAnswers.length);
+        n = cb.quizAnswers.indexOf(false);
 
     if(n === -1) {
         // All questions have been answered
