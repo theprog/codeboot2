@@ -1,15 +1,15 @@
-var quizHTML = '<div id="quiz" class="d-flex justify-content-between">\
+var quizHTML = '<div id="cb-quiz" class="d-flex justify-content-between">\
 <div><div><h2 id="quiz-title"></h2></div><div><h5><span id="quiz-student-name"><span></h5></div></div>\
-  <div id="quiz-question-choice" class="btn-group" data-toggle="buttons">\
+  <div id="cb-quiz-question-choice" class="btn-group" data-toggle="buttons">\
 \
   </div>\
 </div>\
 <div class="row align-items-center">\
-<div class="col-sm-8"><p id="quiz-current-question"></p></div>\
+<div class="col-sm-8"><p id="cb-quiz-current-question"></p></div>\
 <form class="col-sm-4" id="quiz-form" action="" method="">\
   <label>Réponse:<br />\
     <div class="input-group">\
-      <input id="quiz-input" type="text" class="form-control" />\
+      <input id="cb-quiz-input" type="text" class="form-control" />\
       <span class="input-group-btn">\
         <button class="btn btn-success" type="submit">Soumettre</button>\
       </span>\
@@ -21,7 +21,7 @@ var quizHTML = '<div id="quiz" class="d-flex justify-content-between">\
 </form>\
 </div>';
 
-var questionHTML = '<label class="btn btn-secondary"><input type="radio" name="current-quiz-question"><div class="title h4"></div><div class="state h2">&nbsp;</div></label>'
+var questionHTML = '<label class="btn btn-secondary"><input type="radio" name="cb-current-quiz-question"><div class="title h4"></div><div class="state h2">&nbsp;</div></label>'
 
 CodeBoot.prototype.getStudentName = function () {
     return "Annie Brocolli";
@@ -41,17 +41,17 @@ CodeBoot.prototype.loadCurrentQuestion = function() {
         q: q,
         student: cb.getStudentName()
     }, function(data) {
-        $('#quiz-current-question').text(q + ': ' + data);
+        $('#cb-quiz-current-question').text(q + ': ' + data);
     }, "text");
 
-    $('#quiz-input').val(cb.quizAnswers[cb.currentQuestion] || '');
+    $('#cb-quiz-input').val(cb.quizAnswers[cb.currentQuestion] || '');
 };
 
 CodeBoot.prototype.loadQuestion = function(n) {
-    $('#quiz-current-question').fadeOut(500, function() {
+    $('#cb-quiz-current-question').fadeOut(500, function() {
         cb.currentQuestion = n;
 
-        $('#quiz-input').removeClass('is-valid').removeClass('is-invalid');
+        $('#cb-quiz-input').removeClass('is-valid').removeClass('is-invalid');
 
         cb.loadCurrentQuestion();
         $(this).fadeIn('fast');
@@ -67,41 +67,41 @@ CodeBoot.prototype.nextQuestion = function() {
 
     if(n === -1) {
         // All questions have been answered
-        $('#quiz-current-question').text("\u2713 Toutes les questions sont complétées");
+        $('#cb-quiz-current-question').text("\u2713 Toutes les questions sont complétées");
         return;
     }
 
     cb.loadQuestion(n);
 
-    $('#quiz-question-choice .active').removeClass('active');
-    $('#question-' + n).addClass('active');
+    $('#cb-quiz-question-choice .active').removeClass('active');
+    $('#cb-question-' + n).addClass('active');
 };
 
 CodeBoot.prototype.submitAnswer = function() {
     var q = cb.quizQuestions[cb.currentQuestion];
 
-    $('#quiz-input').focus();
+    $('#cb-quiz-input').focus();
 
     $.get('quiz/valid.cgi', {
         quiz: cb.currentQuiz,
         q: q,
         student: cb.getStudentName(),
-        answer: $('#quiz-input').val()
+        answer: $('#cb-quiz-input').val()
     }, function(data) {
         var ok = data.trim() === '1';
         if(ok) {
-            cb.quizAnswers[cb.currentQuestion] = $('#quiz-input').val();
+            cb.quizAnswers[cb.currentQuestion] = $('#cb-quiz-input').val();
 
-            $('.state', '#question-' + cb.currentQuestion).text('\u2713');
+            $('.state', '#cb-question-' + cb.currentQuestion).text('\u2713');
 
-            $('#quiz-input').removeClass('is-invalid')
-                            .addClass('is-valid')
-                            .val('');
+            $('#cb-quiz-input').removeClass('is-invalid')
+                               .addClass('is-valid')
+                               .val('');
 
             cb.nextQuestion();
         } else {
             console.log(data);
-            $('#quiz-input').removeClass('is-invalid').addClass('is-invalid');
+            $('#cb-quiz-input').removeClass('is-invalid').addClass('is-invalid');
         }
     }, "text");
 };
@@ -130,7 +130,7 @@ CodeBoot.prototype.setupQuiz = function (name) {
         cb.quizQuestions.forEach(function(question, i) {
             var q = $(questionHTML);
 
-            q.attr('id', 'question-' + i);
+            q.attr('id', 'cb-question-' + i);
 
             $('input', q).attr('value', i);
 
@@ -141,10 +141,10 @@ CodeBoot.prototype.setupQuiz = function (name) {
                 q.addClass('active');
             }
 
-            $('#quiz-question-choice', quiz).append(q);
+            $('#cb-quiz-question-choice', quiz).append(q);
         })
 
-        $(document).on('change', 'input:radio[name=current-quiz-question]', function (event) {
+        $(document).on('change', 'input:radio[name=cb-current-quiz-question]', function (event) {
             cb.loadQuestion(+$(this).val());
         });
 
@@ -187,7 +187,7 @@ CodeBoot.prototype.installQuiz = function() {
                 element.text(data);
             });
 
-            $('#quiz-list').append(element);
+            $('#cb-quiz-list').append(element);
         });
     });
 };

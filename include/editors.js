@@ -193,7 +193,7 @@ CodeBoot.prototype.createREPLTranscript = function () {
         lineWrapping: true
     };
 
-    var node = document.getElementById("repl-transcript");
+    var node = document.getElementById('cb-repl-transcript');
 
     var editor = CodeMirror(node, options);
 
@@ -211,10 +211,14 @@ function CBTranscript(editor) {
 
 CBTranscript.prototype.onTranscriptChanged = function () {
     // TODO: make this configurable
-    var $console = $("#console");
-    var top = $console.offset().top;
-    var height = $console.height();
-    $("#editors").css("top", top + height);
+    var navbar = $('#cb-navbar');
+    var bottom = navbar.offset().bottom;
+    var height = navbar.height();
+    $('body').css('offset', bottom + height);
+    //TODO:remove
+    //$('#cb-editors').css('top', top + height);
+    //alert('recalculating '+$("#cb-navbar").height());
+    $("#cb-editors").css('padding-top',$("#cb-navbar").height());
 }
 
 CBTranscript.prototype.clear = function () {
@@ -222,21 +226,21 @@ CBTranscript.prototype.clear = function () {
     for (var i = 0; i < this.widgets.length; i++) {
         this.editor.removeLineWidget(this.widgets[i]);
     }
-    this.editor.setValue("");
+    this.editor.setValue('');
     this.editor.refresh();
     this.is_empty = true;
     this.hide();
 };
 
 CBTranscript.prototype.show = function () {
-    $("#repl-transcript").show();
-    $("body").attr("data-has-transcript", "true");
+    $('#cb-repl-transcript').show();
+    $('body').attr('data-has-transcript', 'true');
     this.onTranscriptChanged();
 };
 
 CBTranscript.prototype.hide = function () {
-    $("body").attr("data-has-transcript", "false");
-    $("#repl-transcript").hide();
+    $('body').attr('data-has-transcript', 'false');
+    $('#cb-repl-transcript').hide();
     this.onTranscriptChanged();
 };
 
@@ -250,20 +254,20 @@ CBTranscript.prototype.addTextLine = function (text, cssClass) {
     if (this.is_empty) {
         line = 0;
     } else {
-        text = "\n" + text;
+        text = '\n' + text;
         line = editor.lineCount();
     }
 
     editor.replaceRange(text, { line: line, ch: 0 });
-    editor.markText({ line: line, ch: 0 }, { line: line+1, ch: 0 }, {"className" : cssClass});
+    editor.markText({ line: line, ch: 0 }, { line: line+1, ch: 0 }, {'className' : cssClass});
 
     if (editor.lineInfo(line).gutterMarkers) {
         // Oops, CodeMirror moved the gutter down instead of appending a blank line
         // We'll set the gutter back on the previous line (ugly!)
         line -= 1;
     }
-    if (cssClass === "transcript-input")
-        editor.setGutterMarker(line, "cb-prompt", document.createTextNode(">"));
+    if (cssClass === 'transcript-input')
+        editor.setGutterMarker(line, 'cb-prompt', document.createTextNode('>'));
     this.is_empty = false;
 
     cb.scrollToEnd(this.editor);
@@ -276,9 +280,9 @@ CBTranscript.prototype.addLineWidget = function (textOrNode, cssClass) {
     if (this.is_empty) this.show();
 
     var widget;
-    if (typeof textOrNode === "string") {
+    if (typeof textOrNode === 'string') {
         var text = removeTrailingNewline(textOrNode);
-        var $widget = $("<div/>");
+        var $widget = $('<div/>');
         if (cssClass) $widget.addClass(cssClass);
         $widget.text(text);
         widget = $widget.get(0);
@@ -296,29 +300,29 @@ CBTranscript.prototype.addLineWidget = function (textOrNode, cssClass) {
 CBTranscript.prototype.addLine = function (text, cssClass) {
     var line;
 
-    if (cssClass === "transcript-input") {
+    if (cssClass === 'transcript-input') {
         this.addTextLine(text, cssClass);
     } else {
         this.addLineWidget(text, cssClass);
     }
 };
 
-var default_prompt = ">";
+var default_prompt = '>';
 
 var set_prompt = function (cm, prompt, str) {
 
-   if (str === void 0) str = "";
+   if (str === void 0) str = '';
 
    set_input(cm, str);
 
    if (prompt === void 0) prompt = true;
 
    if (prompt) {
-       cm.setGutterMarker(0, "cb-prompt", document.createTextNode(default_prompt));
-       $("#repl").removeClass("busy");
+       cm.setGutterMarker(0, 'cb-prompt', document.createTextNode(default_prompt));
+       $('#cb-repl').removeClass('busy');
    } else {
-       cm.setGutterMarker(0, "cb-prompt", null);
-       $("#repl").addClass("busy");
+       cm.setGutterMarker(0, 'cb-prompt', null);
+       $('#cb-repl').addClass('busy');
    }
 };
 
@@ -362,7 +366,7 @@ CodeBoot.prototype.createREPLInput = function () {
         lineWrapping: true
     };
 
-    var node = document.getElementById("repl-input");
+    var node = document.getElementById('cb-repl-input');
 
     var editor = CodeMirror(node, options);
 

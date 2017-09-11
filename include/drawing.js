@@ -146,9 +146,9 @@ DrawingWindow.prototype.export = function (thunk) {
     ctx.drawImage(this.turtle_canvas, 0, 0);
 
     var URL = c.toDataURL();
-    $("#urlModal-body").text(URL);
-    $("#urlModal-clippy").empty().clippy({clippy_path: "clippy.swf", text: URL});
-    $("#urlModal").modal('show');
+    $('#urlModal-body').text(URL);
+    $('#urlModal-clippy').empty().clippy({clippy_path: 'clippy.swf', text: URL});
+    $('#urlModal').modal('show');
 };
 
 DrawingWindow.prototype.excursion = function (thunk) {
@@ -290,14 +290,14 @@ DrawingWindow.prototype.drawtext = function (text) {
   ctx.translate(this.pos.x, this.pos.y);
   ctx.rotate((Math.PI/180)*this.orientation);
   ctx.scale(1, -1);
-  dom_fill_text(ctx, text+"", 0, 0);
+  dom_fill_text(ctx, text+'', 0, 0);
   ctx.restore();
 };
 
 var drawing_window;
 
 function init_drawing_window(width, height) {
-  drawing_window = new DrawingWindow('drawing-window', width, height);
+  drawing_window = new DrawingWindow('cb-drawing-window', width, height);
   drawing_window.cs();
 }
 
@@ -305,7 +305,7 @@ init_drawing_window(360, 220);
 //init_drawing_window(250, 250);
 
 function showing_drawing_window() {
-  return $('#drawing-window').is(':visible');
+  return $('#cb-drawing-window').is(':visible');
 }
 
 function export_drawing_window() {
@@ -313,22 +313,22 @@ function export_drawing_window() {
 }
 
 function show_drawing_window() {
-  $("#drawing-window").css("display", "inline");
-  var parent = document.getElementById('drawing-window');
+  $('#cb-drawing-window').css('display', 'inline');
+  var parent = document.getElementById('cb-drawing-window');
   dom_remove_children(parent);
   parent.appendChild(drawing_window.drawing_canvas);
   parent.appendChild(drawing_window.turtle_canvas);
   parent.appendChild(drawing_window.grid_canvas);
-  cb.transcript.addLine("showing drawing window", "error-message");
-  document.getElementById("show-drawing-window-icon").className = "icon-ok";
+  cb.transcript.addLine('showing drawing window', 'error-message');
+  document.getElementById('show-drawing-window-icon').className = 'icon-ok';
 }
 
 function hide_drawing_window() {
-  var parent = document.getElementById('drawing-window');
+  var parent = document.getElementById('cb-drawing-window');
   dom_remove_children(parent);
-  $("#drawing-window").css("display", "none");
-  cb.transcript.addLine("hiding drawing window", "error-message");
-  document.getElementById("show-drawing-window-icon").className = "icon-none";
+  $('#cb-drawing-window').css('display', 'none');
+  cb.transcript.addLine('hiding drawing window', 'error-message');
+  document.getElementById('show-drawing-window-icon').className = 'icon-none';
 }
 
 function ensure_showing_drawing_window() {

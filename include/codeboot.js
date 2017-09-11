@@ -5,6 +5,7 @@ function CodeBoot() {
     this.builtins = {};
 
     this.globalObject = {};
+    //this.globalObject = (function () { return this; })();
 
     this.programState = null;
 
@@ -12,7 +13,7 @@ function CodeBoot() {
     this.saveInProgress = false;
     this.lastFocusedEditor = null;
     this.languageLevel = 'novice';
-    this.stepDelay = 500;
+    this.stepDelay = 2000; //20;
     this.options = {
         showLineNumbers: false
     };
@@ -44,10 +45,6 @@ CodeBoot.prototype.setGlobal = function (name, value) {
 
 CodeBoot.prototype.unload = function () {
     console.log('unload');
-};
-
-CodeBoot.prototype.menuAbout = function () {
-    console.log('menuAbout');
 };
 
 CodeBoot.prototype.menuFile = function () {
@@ -93,7 +90,7 @@ CodeBoot.prototype.eventStep = function (event) {
     //alert(Object.keys($(':focus').prevObject[0]));
     //alert(document.activeElement.tagName);
     cb.execStep();
-    cb.focusLastFocusedEditor();
+//    cb.focusLastFocusedEditor();
 };
 
 CodeBoot.prototype.eventAnimate = function () {
@@ -211,9 +208,10 @@ $(document).ready(function() {
 
     cb.setDevMode(false);
 
-    $("#editors").on("scroll", function () {
-        var $firstEditor = $("#editors").children().first();
-        $("#editors-shadow").toggle($firstEditor.size() > 0 && $firstEditor.position().top < 0);
+    //TODO: deprecated?
+    $('#cb-editors').on('scroll', function () {
+        var $firstEditor = $('#cb-editors').children().first();
+        $('#editors-shadow').toggle($firstEditor.size() > 0 && $firstEditor.position().top < 0);
 
         cb.updatePopupPos();
     });
@@ -227,7 +225,7 @@ $(document).ready(function() {
 //TODO: reenable
 //    $("#setting-linenums").toggleItem(cb.options.showLineNumbers);
 
-    $("#repl").click(function () {
+    $('#cb-repl').click(function () {
         cb.focusREPL();
     });
 
@@ -270,12 +268,12 @@ $(document).ready(function() {
 });
 
 function cb_internal_resizeEditors() {
-    var $console = $("#console");
+    var $console = $('#cb-console');
     var consoleOffset = $console.offset();
-    $("#editors")
-        .css("left", consoleOffset.left)
-        .css("right", consoleOffset.left)
-        .css("top", consoleOffset.top + $console.height());
+    $('#cb-editors')
+        .css('left', consoleOffset.left)
+        .css('right', consoleOffset.left)
+        .css('top', consoleOffset.top + $console.height());
 }
 
 function checkBrowserFeatures() {
@@ -287,17 +285,17 @@ function checkBrowserFeatures() {
         var status_label;
         switch (feature.status) {
           case MISSING:
-            status_label = "missing";
+            status_label = 'missing';
             break;
           case EMULATED:
-            status_label = "emulated";
+            status_label = 'emulated';
             break;
           default:
-            status_label = "supported";
+            status_label = 'supported';
             break;
         }
 
-        $("#browserIssues ul").append($("<li/>").append($('<a/>').attr('href', feature.url).attr("target", "new").text(feature.name + " " + status_label)));
+        $('#browserIssues ul').append($('<li/>').append($('<a/>').attr('href', feature.url).attr('target', 'new').text(feature.name + ' ' + status_label)));
         status = Math.min(status, feature.status);
     }
 

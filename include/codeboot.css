@@ -1,10 +1,30 @@
+body {
+    top: 500px;
+}
+
+zzzhtml,
+zzzbody {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+
 .navbar {
     border: 0;
     margin: 0;
     padding: 0;
 }
 
-#navbar-header {
+#cb-navbar {
+    background-color: white;
+    box-shadow: 0 20px 20px white;
+    zzzposition: -webkit-sticky;
+    zzzposition: sticky;
+    zzztop: 0px;
+    zzzz-index: 99999;
+}
+
+#cb-navbar-header {
     width: 100%;
     height: 200px;
     padding: 10px 10px 10px 10px;
@@ -12,20 +32,23 @@
     display: none;
 }
 
-#navbar-footer {
+#cb-navbar-footer {
+}
+
+#cb-controls {
     width: 100%;
     padding: 10px 10px 10px 10px;
 }
 
-body {
-    padding-top: 54px;
+zzzbody {
+    padding-top: 154px;
 }
 
-body[data-theme="quiz"] {
+body[data-cb-theme="quiz"] {
     padding-top: 254px;
 }
 
-body[data-theme="quiz"] #navbar-header {
+body[data-cb-theme="quiz"] #cb-navbar-header {
     display: inline;
 }
 
@@ -94,48 +117,51 @@ body[data-theme="quiz"] #navbar-header {
   opacity: 0.85;
 }
 
-#menu {
+#cb-menu {
 }
 
-#menu-brand-btn,
-#menu-file-btn,
-#menu-settings-btn,
-#menu-help-btn {
+#cb-menu-brand-btn,
+#cb-menu-file-btn,
+#cb-menu-settings-btn,
+#cb-menu-help-btn {
   font-weight: bold;
   color: #fefefe;
   transform: translate(0, 8px);
   margin: -10px 0 0 0;
 }
 
-#menu-brand-btn {
+#cb-menu-brand-btn {
   font-size: 140%;
 }
 
-#menu-file-btn,
-#menu-settings-btn,
-#menu-help-btn {
+#cb-menu-file-btn,
+#cb-menu-settings-btn,
+#cb-menu-help-btn {
   font-size: 110%;
 }
 
-#menu-help-btn {
+#cb-menu-quiz-btn,
+#cb-menu-file-btn,
+#cb-menu-settings-btn,
+#cb-menu-help-btn {
   display: none;
 }
 
 
 
-#menu button {
+#cb-menu button {
   background-color: transparent;
   border: none;
   overflow: hidden;
   outline: none;
 }
 
-#menu button:hover {
+#cb-menu button:hover {
   color: #292b2c;
   background-color: #f0f0f0;
 }
 
-#menu {
+#cb-menu {
   float: left;
 }
 
@@ -302,7 +328,7 @@ body[data-theme="quiz"] #navbar-header {
 
 div.tab-content,
 pre.tab-content,
-#zzzrepl {
+#zzzcb-repl {
 	margin-bottom: 20px;
 }
 
@@ -336,13 +362,17 @@ div.tab-pane {
 
 /* ----- Editors ----- */
 
+#cb-editors {
+    padding-bottom: 50px;
+}
+
 .CodeMirror {
     font-size: 20px;
     line-height: 22px;
 }
 
 /* Console should be 1 line high */
-#repl .CodeMirror {
+#cb-repl .CodeMirror {
   height: 100%;
   padding: 0 10px 0 10px;
   margin: 0;
@@ -366,11 +396,11 @@ pre.CodeMirror-line {
   background: rgba(0,0,0,0.3);
 }
 
-#repl.busy .CodeMirror-cursor {
+#cb-repl.busy .CodeMirror-cursor {
     display: none !important;
 }
 
-#zzzrepl CodeMirror {
+#zzzcb-repl CodeMirror {
   height: 1.5em;
 }
 
@@ -410,7 +440,7 @@ pre.CodeMirror-line {
 .ui-resizable-s {
     height: 7px;
     bottom: 0;
-    background: transparent url('icons/resize_handle_corner.png') no-repeat top right;
+    background: transparent url('img/resize-handle-corner.png') no-repeat top right;
 }
 
 .ui-resizable-handle {
@@ -421,22 +451,6 @@ pre.CodeMirror-line {
     background-color: transparent;
     position: relative;
     z-index: 200;
-}
-
-#editors-shadow {
-    width: auto;
-    margin: 0 10px;
-    height: 10px;
-    background: transparent url("icons/shadow.png") repeat-x top left;
-}
-
-#editors_now_disabled {
-    position: absolute;
-    top: 160px;
-    left: 55px;
-    right: 55px;
-    bottom: 0;
-    overflow-y: auto;
 }
 
 /* ----- Pseudo-body for DOM experimentation ----- */
@@ -462,58 +476,62 @@ pre.CodeMirror-line {
 
 /* ----- Drawing window ----- */
 
-#drawing-window {
+#cb-drawing-window {
+    display: none;
+    flex: 0 0 366px;
+    padding: 15px 15px 15px 0;
+    margin: 0;
     float: right;
 }
 
 /* ----- Console ----- */
 
-#repl {
+#cb-repl {
     margin: 15px 15px 15px 15px;
     padding: 10px 0 10px 0;
     border-radius: 4px;
 }
 
-body[data-lang-level="novice"] #repl {
+body[data-lang-level="novice"] #cb-repl {
     border: 0px solid #49afcd;
     background-color: #EDF7FA;
 }
 
-body[data-lang-level="novice"][data-has-transcript="true"] #repl-input {
-    border-top: 1px solid #e0e0e0;
+body[data-lang-level="novice"][data-has-transcript="true"] #cb-repl-transcript {
+    box-shadow: 0 -1px 0 0 #ccc inset;
 }
 
-body[data-lang-level="novice"] nav {
+body[data-lang-level="novice"] #cb-controls {
   background-color: #7DB6D5;
 }
 
-body[data-lang-level="standard"] #repl {
+body[data-lang-level="standard"] #cb-repl {
     border: 0px solid #da4f49;
     background-color: #fdf6f6;
 }
 
-body[data-lang-level="standard"][data-has-transcript="true"] #repl-input {
-    border-top: 1px solid #e0e0e0;
+body[data-lang-level="standard"][data-has-transcript="true"] #cb-repl-transcript {
+    border-bottom: 1px solid #ccc;
 }
 
-body[data-lang-level="standard"] nav {
+body[data-lang-level="standard"] #cb-controls {
   background-color: #E7A555;
 }
 
-#repl-transcript,
-#repl-input {
+#cb-repl-transcript,
+#cb-repl-input {
 }
 
-#repl-transcript {
+#cb-repl-transcript {
     width: 100%;
     display: none;
 }
 
-#repl-transcript .CodeMirror-scroll {
+#cb-repl-transcript .CodeMirror-scroll {
     max-height: 9em;
 }
 
-#repl-input {
+#cb-repl-input {
     width: 100%;
     padding: none;
     border: none;
@@ -538,23 +556,18 @@ body[data-lang-level="standard"] nav {
 
 
 
-#console {
+#cb-console {
+    width: 100%;
     display: flex;
     zzzflex-flow: row nowrap;
 }
 
-#repl {
+#cb-repl {
     min-width: 250px;
     flex: 1 1 auto;
     align-self: flex-start;
 }
 
-#drawing-window {
-    display: none;
-    flex: 0 0 366px;
-    padding: 15px 15px 15px 0;
-    margin: 0;
-}
 
 
 .file-editor {
@@ -573,21 +586,6 @@ body[data-lang-level="standard"] nav {
 
 
 
-
-
-
-
-#repl-span2 {
-    width: 100%;
-    display: flex;
-    align-items: stretch;
-    zzzwidth: 90%;
-}
-
-#drawing-span2 {
-    flex-grow: 1;
-    flex-shrink: 0;
-}
 
 
 
@@ -636,15 +634,6 @@ body[data-lang-level="standard"] nav {
 
 
 
-zzzbody {
-        background-color: gray;
-}
-
-
-#zzzrepl {
-    width: 100%;
-}
-
 
 
 
@@ -677,12 +666,59 @@ zzzbody {
     min-width: 200px;
 }
 
-/* ----- Source code highlighting ----- */
+/* ----- Execution point bubble ----- */
 
-.exec-point-code {
+.tippy-tooltip.cb-exec-point-bubble-theme {
+    min-width: 50px;
+    background-color: yellow;
+    box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.5);
+    padding: 0;
+}
+
+.tippy-tooltip.cb-exec-point-bubble-theme [x-arrow] {
+    border-bottom: 7px solid yellow;
+    border-right: 7px solid transparent;
+    border-left: 7px solid transparent;
+}
+
+.tippy-tooltip.cb-exec-point-bubble-theme .tippy-tooltip-content {
+    width: 100%;
+    color: black;
+}
+
+.cb-exec-point-bubble-value-no-context {
+    padding: 5px;
+}
+
+.cb-exec-point-bubble-value {
+    padding: 5px;
+    border-bottom: 2px solid #ccc;
+}
+
+.cb-exec-point-bubble-context {
+    padding: 5px;
+    zzzbackground-color: white;
+}
+
+.cb-exec-point-bubble-binding {
+    display: flex;
+}
+
+
+/*
+<div class="tippy-tooltip tippy-tooltip--regular leave dark-theme" data-animation="shift" data-interactive="" data-template-id="#cb-exec-point-bubble-template" style="bottom: 0px;"><div class="arrow-regular" x-arrow=""></div><div class="tippy-tooltip-content">foo</div></div>
+*/
+
+/* ----- Execution point source code highlighting ----- */
+
+.cb-exec-point-code {
 /*  border: 1px solid #aaa;*/
   font-size: 20px;
   background-color: yellow;
+}
+
+#cb-exec-point-bubble-template {
+    display: none;
 }
 
 .value-bubble {
@@ -708,15 +744,13 @@ zzzbody {
   border-bottom-color: yellow;
 }
 
-/*
-.popover.value-bubble {
-    left: -25px !important;
+.zzzpopover.value-bubble {
+    left: 83px !important;
 }
 
 .popover.value-bubble .arrow {
-    left: 7% !important;
+    left: 13px !important;
 }
-*/
 
 .cb-code-font {
     font-family: Courier;

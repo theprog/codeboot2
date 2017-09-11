@@ -45,7 +45,7 @@ function position_to_line_ch(pos) {
            };
 }
 
-function code_highlight(loc, cssClass) {
+CodeBoot.prototype.codeHighlight = function (loc, cssClass, markEnd) {
 
     var container = loc.container;
     var editor;
@@ -68,12 +68,24 @@ function code_highlight(loc, cssClass) {
         return null;
     }
 
-    var start = position_to_line_ch(loc.start_pos);
+    var start = { line: position_to_line(loc.end_pos)-1,
+                  ch: position_to_column(loc.end_pos)-2
+                };
     var end = position_to_line_ch(loc.end_pos);
-    var marker = editor.markText(start, end, {"className": cssClass});
-    marker.cb_editor = editor;
-    return marker;
-}
+    var start = position_to_line_ch(loc.start_pos);
+    var allMarker = editor.markText(start, end, {'className': cssClass});
+    allMarker.cb_editor = editor;
+
+    if (markEnd) {
+        start.line = end.line;
+        start.ch = end.ch-1;
+        var endMarker = editor.markText(start, end, {'className': cssClass+'-end'});
+        endMarker.cb_editor = editor;
+        return { all: allMarker, end: endMarker };
+    } else {
+        return { all: allMarker, end: null };
+    }
+};
 
 CodeBoot.prototype.printedRepresentation_old = function (x) {
 
@@ -476,15 +488,18 @@ CodeBoot.prototype.modeStepping = function () {
     return 'stepping';
 };
 
-cb.programState = {
-    rte: null,
-    error_mark: null,
-    step_mark: null,
-    value_bubble: null,
-    timeoutId: null,
-    step_delay: 0,
-    mode: cb.modeStopped(),
-    code_queue: []
+CodeBoot.prototype.initProgramState = function () {
+    cb.programState = {
+        rte: null,
+        errorMark: null,
+        execPointMark: null,
+        execPointBubble: new CBExecPointBubble(),
+        value_bubble: null, //TODO: remove
+        timeoutId: null,
+        step_delay: 0,
+        mode: cb.modeStopped(),
+        code_queue: []
+    };
 };
 
 function code_queue_add(code) {
@@ -706,13 +721,22 @@ CodeBoot.prototype.show_error = function (loc) {
 
     cb.hide_error();
 
-    cb.programState.error_mark = code_highlight(loc, "error-code");
+    cb.programState.errorMark = cb.codeHighlight(loc, 'error-code', false);
 };
 
 CodeBoot.prototype.hide_error = function () {
-    if (cb.programState.error_mark !== null) {
-        cb.programState.error_mark.clear();
-        cb.programState.error_mark = null;
+    if (cb.programState.errorMark !== null) {
+        cb.clearMarker(cb.programState.errorMark);
+        cb.programState.errorMark = null;
+    }
+};
+
+CodeBoot.prototype.clearMarker = function (marker) {
+    if (marker.all !== null) {
+        marker.all.clear();
+    }
+    if (marker.end !== null) {
+        marker.end.clear();
     }
 };
 
@@ -744,7 +768,7 @@ function scrollToMarker(marker, editor) {
         var range = marker.find();
         if (range) {
             var rect = editor.charCoords(range.from, "local");
-            editor.scrollTo(rect.left, rect.top);
+            editor.scrollTo(rect.left, rect.bottom);
         }
     }
 }
@@ -753,8 +777,8 @@ function CBValueBubble(opts) {
     this.opts = {};
     $.extend(this.opts, {
         value : cb.programState.rte.result,
-        context : cb.dump_context(),
-        $anchor : function () { return $(".exec-point-code").last(); },
+        context : cb.dumpContext(),
+        $anchor : function () { return $(".cb-exec-point-code").last(); },
         $container: null,
     }, opts);
 
@@ -769,6 +793,159 @@ CodeBoot.prototype.closeValueBubble = function () {
         cb.programState.value_bubble = null;
     }
 };
+
+function CBExecPointBubble() {
+    this.tip  = null;
+    this.elem = null;
+};
+
+CBExecPointBubble.prototype.isVisible = function () {
+
+    if (this.tip !== null) {
+        var popper = this.tip.getPopperElement(this.elem);
+        if (popper !== null) {
+            return popper.isVisible();
+        }
+    }
+
+    return false;
+};
+
+CBExecPointBubble.prototype.show = function () {
+
+    if (this.tip !== null) {
+        var popper = this.tip.getPopperElement(this.elem);
+        if (popper !== null) {
+            this.tip.show(popper);
+        }
+    }
+
+};
+
+CBExecPointBubble.prototype.hide = function () {
+
+    if (this.tip !== null) {
+        var popper = this.tip.getPopperElement(this.elem);
+        if (popper !== null) {
+            this.tip.hide(popper);
+        }
+    }
+
+};
+
+CBExecPointBubble.prototype.destroy = function () {
+
+    if (this.tip !== null) {
+        var popper = this.tip.getPopperElement(this.elem);
+        if (popper !== null) {
+            this.tip.destroy(popper);
+        }
+    }
+
+    this.tip  = null;
+    this.elem = null;
+
+};
+
+CBExecPointBubble.prototype.replaceContent = function (html) {
+
+    if (this.tip !== null) {
+        var popper = this.tip.getPopperElement(this.elem);
+        if (popper !== null) {
+            var contentElem = popper.querySelector('.tippy-tooltip-content');
+            if (contentElem !== null) {
+                contentElem.innerHTML = html;
+            }
+        }
+    }
+
+};
+
+CodeBoot.prototype.execPointCodeElement = function () {
+
+    var elems = [].slice.call(document.querySelectorAll('.cb-exec-point-code-end'),-1);
+
+    if (elems.length === 0)
+        return null;
+    else
+        return elems[0];
+};
+
+CBExecPointBubble.prototype.attachTo = function (elem, html) {
+
+    if (elem === null) return;
+
+    var _this = this;
+
+    if (this.elem === null || this.elem !== elem) {
+
+        /* create a new bubble */
+
+        if (this.elem !== null)
+            this.destroy();
+
+        var tip = tippy(elem, {
+            html: '#cb-exec-point-bubble-template',
+            theme: 'cb-exec-point-bubble',
+            //position: 'bottom-start',
+            position: 'bottom',
+            trigger: 'manual',
+            sticky: 'true',
+            arrow: true,
+            interactive: true,
+            duration: 0,
+            popperOptions: {
+                modifiers: {
+                    flip: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+
+        this.tip = tip;
+        this.elem = elem;
+    }
+
+    this.replaceContent(html);
+
+    setTimeout(function () { _this.show(); }, 0);
+
+/*
+        //<div class="tippy-tooltip tippy-tooltip--regular leave dark-theme" data-animation="shift" data-interactive="" data-template-id="#cb-exec-point-bubble-template" style="bottom: 0px;"><div class="arrow-regular" x-arrow=""></div><div class="tippy-tooltip-content">foo</div></div>
+
+        setTimeout(function () {
+            alert(tip.getPopperElement(elem).innerHTML);
+            tip.show(tip.getPopperElement(elem));
+        }, 0);
+*/
+
+};
+
+CodeBoot.prototype.execPointBubbleHTML = function () {
+
+    var val = cb.programState.rte.result;
+    var valHTML = (val === void 0)
+                  ? '<i>no value</i>'
+                  : cb.printedRepresentation(val, 'HTML');
+
+    var contextHTML = cb.dumpContext();
+
+    if (contextHTML === '') {
+        return '<div class="cb-exec-point-bubble-value-no-context">' +
+               valHTML +
+               '</div>';
+    } else {
+        return '<div class="cb-exec-point-bubble-value">' +
+               valHTML +
+               '</div>' +
+               '<div class="cb-exec-point-bubble-context">' +
+               contextHTML +
+               '</div>';
+    }
+};
+
+
 
 CBValueBubble.prototype.init = function ($anchor) {
 
@@ -791,6 +968,38 @@ CBValueBubble.prototype.init = function ($anchor) {
         }
     );
 
+        return;
+    }
+
+    if (false) {
+        var tip = tippy('#myButton');
+        var el = document.querySelector('#myButton');
+        var popper = tip.getPopperElement(el);
+        tip.show(popper);
+    }
+
+    if (false) {
+        var elem = [].slice.call(document.querySelectorAll('.cb-exec-point-code'),-1)[0];
+        var tip = tippy(elem, {
+            html: '#my-template-id', // OR document.querySelector('#my-template-id')
+            position: 'bottom-start',
+            trigger: 'manual',
+            //sticky: 'true',
+            arrow: true
+        });
+        //tip.show();
+        //elem.focus();
+        //setTimeout(function () { tip.hide(); }, 2000);
+        //tip.show();
+        //elem.click();
+        //tip.show();
+        setTimeout(function () {
+        if (true) {
+            var elem = [].slice.call(document.querySelectorAll('.cb-exec-point-code'),-1)[0];
+            var popper = tip.getPopperElement(elem);
+            tip.show(popper);
+        }
+        }, 0);
         return;
     }
 
@@ -847,7 +1056,7 @@ CBValueBubble.prototype.init = function ($anchor) {
         $("button.close", $tip).on("click", function() {
             self.closed = true;
             self.hide();
-            $(".exec-point-code").one("mouseover", function () {
+            $(".cb-exec-point-code").one("mouseover", function () {
                 if (!self.isOpen()) {
                     self.show();
                 }
@@ -960,26 +1169,19 @@ CBValueBubble.prototype.height = function () {
 
 CodeBoot.prototype.hideExecPoint = function () {
 
-    if (cb.programState.step_mark !== null ||
-        cb.programState.value_bubble !== null) {
+    cb.programState.execPointBubble.hide();
 
-        if (cb.programState.value_bubble !== null) {
-            cb.programState.value_bubble.destroy();
-            cb.programState.value_bubble = null;
-        }
-
-        if (cb.programState.step_mark !== null) {
-            cb.programState.step_mark.clear();
-            cb.programState.step_mark = null;
-        }
+    if (cb.programState.execPointMark !== null) {
+        cb.clearMarker(cb.programState.execPointMark);
+        cb.programState.execPointMark = null;
+    }
 
         // Somehow, CodeMirror seems to hold on to the marked elements
         // somewhere, causing problems when displaying the
         // bubble. This kludge should at least prevent the problem
         // from manifesting for the user.
         //TODO: proper fix
-        $(".exec-point-code").removeClass("exec-point-code");
-    }
+//        $(".cb-exec-point-code").removeClass("cb-exec-point-code");
 };
 
 CodeBoot.prototype.showExecPoint = function () {
@@ -989,32 +1191,37 @@ CodeBoot.prototype.showExecPoint = function () {
     cb.hideExecPoint();
 
     var loc = cb.programState.rte.ast.loc;
-    cb.programState.step_mark = code_highlight(loc, "exec-point-code");
-    scrollToMarker(cb.programState.step_mark);
+    cb.programState.execPointMark = cb.codeHighlight(loc, 'cb-exec-point-code', true);
+    scrollToMarker(cb.programState.execPointMark.end);
 
     var value = cb.programState.rte.result;
     var $container;
     if (loc.container instanceof SourceContainerInternalFile) {
-        $container = $("#editors");
+        $container = $('#cb-editors');
     } else {
         $container = null; /* use whole document */
     }
 
-    if (!$(".exec-point-code").last().isInView($container)) {
+    if (!$(".cb-exec-point-code-end").last().isInView($container)) {
         var filename = loc.container.toString();
         cb.scrollTo(cb.getContainerFor(filename));
     }
+
+    if (true) {
+        cb.programState.execPointBubble.attachTo(
+            cb.execPointCodeElement(),
+            cb.execPointBubbleHTML());
+    } else {
 
     cb.programState.value_bubble = new CBValueBubble({
         $container: $container
     });
 
-    cb.programState.value_bubble.show();
+        cb.programState.value_bubble.show();
+    }
 };
 
-CodeBoot.prototype.dump_context = function () {
-
-    //return ""; // don't dump context yet
+CodeBoot.prototype.dumpContext = function () {
 
     var rte = cb.programState.rte;
     var f = rte.frame;
@@ -1022,49 +1229,38 @@ CodeBoot.prototype.dump_context = function () {
     var result = [];
     var seen = {};
 
-    var add = function (id, val)
-    {
-        if (seen[id] === void 0)
-        {
-            if (val !== void 0) // don't show undefined variables
-            {
-                result.push('<span class="cb-code-font">' + id + '</span>: ' + cb.printedRepresentation(val, 'HTML'));
+    var add = function (id, val) {
+        if (seen[id] === void 0) {
+            if (val !== void 0) { // don't show undefined variables
+                result.push('<div class="cb-exec-point-bubble-binding"><span class="cb-code-font">' + id + '</span>: ' + cb.printedRepresentation(val, 'HTML') + '</div>');
             }
             seen[id] = true;
         }
     };
 
-    while (cte !== null)
-    {
-        for (var id_str in cte.params)
-        {
+    while (cte !== null) {
+        for (var id_str in cte.params) {
             var i = cte.params[id_str];
             add(id_str, f.params[i]);
         }
-        for (var id_str in cte.locals)
-        {
-            if (cte.parent !== null)
-            {
+        for (var id_str in cte.locals) {
+            if (cte.parent !== null) {
                 var i = cte.locals[id_str];
                 add(id_str, f.locals[i]);
-            }
-            else
-            {
-                if (uninteresting_global[id_str] === void 0)
-                {
+            } else {
+                if (uninteresting_global[id_str] === void 0) {
                     add(id_str, rte.glo[id_str]);
                 }
             }
         }
-        if (cte.callee !== null)
-        {
+        if (cte.callee !== null) {
             add(cte.callee, f.callee);
         }
         cte = cte.parent;
         f = f.parent;
     }
 
-    return result.join("<br/>");
+    return result.join('');
 };
 
 var uninteresting_global = {};
@@ -1839,3 +2035,5 @@ CodeBoot.prototype.undo = function (cm) {
 CodeBoot.prototype.redo = function (cm) {
     cm.redo();
 };
+
+cb.initProgramState();

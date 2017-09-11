@@ -13,7 +13,7 @@ function makeMenuSeparator() {
 
 CodeBoot.prototype.scrollTo = function (elementOrSelector) {
     var elementOffset = $(elementOrSelector).position().top; // - NAVBAR_HEIGHT - EDITOR_SPACING;
-    $("#editors").animate({scrollTop: elementOffset}, 400);
+    $('#cb-editors').animate({scrollTop: elementOffset}, 400);
 };
 
 CodeBoot.prototype.getShortURL = function (longUrl) {
@@ -635,7 +635,7 @@ CodeBoot.prototype.newTab = function (fileOrFilename) {
     var content = $('<div class="tab-content file-editor-content"/>');
     fileEditor.append(content);
 
-    $("#editors").prepend(fileEditor);
+    $('#cb-editors').prepend(fileEditor);
 
     var editor = cb.createFileEditor(content.get(0), file);
 
