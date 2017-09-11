@@ -1,7 +1,3 @@
-body {
-    top: 500px;
-}
-
 zzzhtml,
 zzzbody {
   height: 100%;
@@ -9,7 +5,7 @@ zzzbody {
   overflow: auto;
 }
 
-.navbar {
+.zzznavbar {
     border: 0;
     margin: 0;
     padding: 0;
@@ -18,6 +14,9 @@ zzzbody {
 #cb-navbar {
     background-color: white;
     box-shadow: 0 20px 20px white;
+    border: 0;
+    margin: 0;
+    padding: 0;
     zzzposition: -webkit-sticky;
     zzzposition: sticky;
     zzztop: 0px;
@@ -52,33 +51,33 @@ body[data-cb-theme="quiz"] #cb-navbar-header {
     display: inline;
 }
 
-#exec-controls-counter {
+#cb-exec-controls-counter {
     display: inline-block;
 }
 
-#exec-controls button {
+#cb-exec-controls button {
   height: 40px;
 }
 
-#exec-btn-step,
-#exec-btn-animate,
-#exec-btn-eval,
-#exec-btn-stop {
+#cb-exec-btn-step,
+#cb-exec-btn-animate,
+#cb-exec-btn-eval,
+#cb-exec-btn-stop {
   width: 48px;
 }
 
-#exec-img-play-pause,
-#exec-img-play-1,
-#exec-img-pause,
-#exec-img-play,
-#exec-img-play-inf,
-#exec-img-stop {
+#cb-exec-img-play-pause,
+#cb-exec-img-play-1,
+#cb-exec-img-pause,
+#cb-exec-img-play,
+#cb-exec-img-play-inf,
+#cb-exec-img-stop {
   height: 22px;
   margin: 2px 0 4px 0;
 }
 
-#exec-img-play-1,
-#exec-img-pause {
+#cb-exec-img-play-1,
+#cb-exec-img-pause {
   display: none;
 }
 
@@ -166,11 +165,11 @@ body[data-cb-theme="quiz"] #cb-navbar-header {
   float: left;
 }
 
-#exec-controls {
+#cb-exec-controls {
   float: right;
 }
 
-#exec-step-counter {
+#cb-exec-step-counter {
     display: none;
 }
 
@@ -759,11 +758,6 @@ body[data-lang-level="standard"] #cb-controls {
 }
 
 
-#navbar-step-counter {
-    display: none; /* initially hidden */
-    margin: 0 10px 0 0;
-}
-
 body[data-lang-level="novice"] .error-code {
 /*  border: 1px solid #aaa;*/
   background-color: pink;
@@ -849,18 +843,18 @@ display: inline-block;
 }
 
 
-#exec-btn-step:disabled > img,
-#exec-btn-animate:disabled > img,
-#exec-btn-eval:disabled > img,
-#exec-btn-stop:disabled > img {
+#cb-exec-btn-step:disabled > img,
+#cb-exec-btn-animate:disabled > img,
+#cb-exec-btn-eval:disabled > img,
+#cb-exec-btn-stop:disabled > img {
     opacity: 0.1;
     background-color: white;
 }
 
-#exec-btn-step:disabled,
-#exec-btn-animate:disabled,
-#exec-btn-eval:disabled,
-#exec-btn-stop:disabled {
+#cb-exec-btn-step:disabled,
+#cb-exec-btn-animate:disabled,
+#cb-exec-btn-eval:disabled,
+#cb-exec-btn-stop:disabled {
     background-color: transparent;
 }
 
