@@ -32,7 +32,7 @@ function getStudentName() {
             return link.innerText;
         }
     }
-    return null;
+    return 'anonyme';
 }
 
 function getContextInfo() {
