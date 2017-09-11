@@ -290,6 +290,7 @@ CodeBoot.prototype.installQuiz = function() {
 
     cb.contextInfo = getContextInfo();
 
+/*
     // Add quiz menu
     var quizMenu = document.createElement('span');
     quizMenu.innerHTML = quizMenuHTML;
@@ -326,6 +327,9 @@ CodeBoot.prototype.installQuiz = function() {
             });
         }
     });
+*/
+
+    cb.setupQuiz('exercice1');
 };
 
 cb.installQuiz();
