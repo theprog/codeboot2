@@ -1,4 +1,5 @@
-cb.quizUrl = 'http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/';
+cb.quizUrl = 'https://www-labs.iro.umontreal.ca/~codeboot/codeboot2/';
+cb.quizUrl = 'http://localhost/codeboot/';
 
 /*---------------------------------------------------------------------------*/
 /* Get student and document information from Studium */
@@ -51,7 +52,7 @@ function getContextInfo() {
         }
     }
     return { name: getStudentName(),
-             id: id,
+             id: id || 'anonyme',
              lastAccess: lastAccess,
              title: getDocumentTitle()
            };
@@ -169,6 +170,7 @@ CodeBoot.prototype.submitAnswer = function() {
             quiz: cb.currentQuiz,
             q: q,
             student: cb.getStudentName(),
+            unip: cb.contextInfo.id,
             answer: $('#cb-quiz-input').val()
         },
         jsonp: 'callback',
@@ -218,15 +220,22 @@ CodeBoot.prototype.setupQuiz = function (name) {
     $.ajax({
         url: cb.quizUrl + '/quiz/questions.cgi',
         data: {
-            quiz: name
+            quiz: name,
+            unip: cb.contextInfo.id
         },
         jsonp: 'callback',
         dataType: 'jsonp',
         success: function(data) {
             data = b64DecodeUnicode(data);
-            cb.quizQuestions = data.trim().split('\n');
 
-            cb.quizAnswers = cb.quizQuestions.map(function() { return false });
+            cb.quizQuestions = data.trim().split('\n').map(function(q) {
+                return q.split(' ')[0];
+            });
+
+            cb.quizAnswers = data.trim().split('\n').map(function(q, i) {
+                var answered =  q.split(' ')[1] != '0';
+                return answered ? ' ' : false;
+            });
 
             cb.quizQuestions.forEach(function(question, i) {
                 var q = $(questionHTML);
@@ -236,6 +245,9 @@ CodeBoot.prototype.setupQuiz = function (name) {
                 $('input', q).attr('value', i);
 
                 $('.title', q).text(question);
+
+                if(cb.quizAnswers[i])
+                    $('.state', q).text('\u2713');
 
                 if(i === 0) {
                     $('input', q).prop('checked', true);
