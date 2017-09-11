@@ -16,5 +16,5 @@ if test -e quiz/$post_quiz/$post_q/correct.sh
 then
     ans=$(cd quiz/$post_quiz/$post_q/; ./correct.sh "$post_student" "$post_answer" | tr -d '\n')
     echo "$post_q" "$ans" "$post_answer" >> "answers/$post_quiz/$post_student"
-    echo "$ans"
+    echo "$ans" | jsonp
 fi

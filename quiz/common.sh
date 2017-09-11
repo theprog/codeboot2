@@ -30,3 +30,9 @@ function require_vars() {
         fi
     done
 }
+
+function jsonp() {
+    require_vars post_callback
+
+    cat <(echo -n "/**/$post_callback('") <(base64 | tr -d '\n') <(echo -n "');")
+}
