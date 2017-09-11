@@ -59,14 +59,14 @@ function getContextInfo() {
 /*---------------------------------------------------------------------------*/
 
 var quizHTML = '<div id="cb-quiz" class="d-flex justify-content-between">\
-<div><div><h2 id="quiz-title"></h2></div><div><h5><span id="quiz-student-name"><span></h5></div></div>\
+<div><div><h2 id="cb-quiz-title"></h2></div><div><h5><span id="cb-quiz-student-name"><span></h5></div></div>\
   <div id="cb-quiz-question-choice" class="btn-group" data-toggle="buttons">\
 \
   </div>\
 </div>\
 <div class="row align-items-center">\
 <div class="col-sm-8"><p id="cb-quiz-current-question"></p></div>\
-<form class="col-sm-4" id="quiz-form" action="" method="">\
+<form class="col-sm-4" id="cb-quiz-form" action="" method="">\
   <label>Réponse:<br />\
     <div class="input-group">\
       <input id="cb-quiz-input" type="text" class="form-control" />\
@@ -74,7 +74,7 @@ var quizHTML = '<div id="cb-quiz" class="d-flex justify-content-between">\
         <button class="btn btn-success" type="submit">Soumettre</button>\
       </span>\
       <span class="input-group-btn">\
-        <button id="quiz-pass" class="btn btn-secondary" type="button">Passer</button>\
+        <button id="cb-quiz-pass" class="btn btn-secondary" type="button">Passer</button>\
       </span>\
     </div>\
   </label>\
@@ -184,7 +184,7 @@ CodeBoot.prototype.setupQuiz = function (name) {
     var quiz = $(quizHTML);
 
     $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/quiz/' + name + '/title', {}, function(data) {
-        $('#quiz-title', quiz).text(data);
+        $('#cb-quiz-title', quiz).text(data);
     });
 
     // Load questions
@@ -216,18 +216,18 @@ CodeBoot.prototype.setupQuiz = function (name) {
             cb.loadQuestion(+$(this).val());
         });
 
-        $("body").attr("data-theme", "quiz");
+        $("body").attr("data-cb-theme", "quiz");
 
-        $("#navbar-header").html(quiz);
+        $("#cb-navbar-header").html(quiz);
 
-        $("#quiz-student-name").text("pour " + studentName);
+        $("#cb-quiz-student-name").text("pour " + studentName);
 
-        $('#quiz-form').submit(function() {
+        $('#cb-quiz-form').submit(function() {
             cb.submitAnswer();
             return false;
         });
 
-        $('#quiz-pass').click(function() {
+        $('#cb-quiz-pass').click(function() {
             cb.nextQuestion();
         });
         // Load the first question
@@ -237,8 +237,8 @@ CodeBoot.prototype.setupQuiz = function (name) {
 
 
 CodeBoot.prototype.closeQuiz = function () {
-    $("#navbar-header").html('');
-    $("body").attr("data-theme", "");
+    $("#cb-navbar-header").html('');
+    $("body").attr("data-cb-theme", "");
 };
 
 CodeBoot.prototype.installQuiz = function() {
