@@ -1,5 +1,4 @@
 cb.quizUrl = 'https://www-labs.iro.umontreal.ca/~codeboot/codeboot2/';
-cb.quizUrl = 'http://localhost/codeboot/';
 
 /*---------------------------------------------------------------------------*/
 /* Get student and document information from Studium */
