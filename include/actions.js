@@ -523,17 +523,17 @@ function code_queue_service() {
 }
 
 CodeBoot.prototype.showingStepCounter = function () {
-    return $('#exec-step-counter').is(':visible');
+    return $('#cb-exec-step-counter').is(':visible');
 };
 
 CodeBoot.prototype.showStepCounter = function () {
-    var counter = $("#exec-step-counter");
+    var counter = $("#cb-exec-step-counter");
     counter.css("display", "inline");
     counter.text(cb.textStepCounter());
 };
 
 CodeBoot.prototype.hideStepCounter = function () {
-    var counter = $("#exec-step-counter");
+    var counter = $("#cb-exec-step-counter");
     counter.css("display", "none");
 };
 
@@ -562,17 +562,17 @@ CodeBoot.prototype.enterMode = function (newMode) {
     // Show either play-1, pause or play-pause
 
     if (isStepping) {
-        $("#exec-img-play-1"    ).css("display", "inline");
-        $("#exec-img-pause"     ).css("display", "none");
-        $("#exec-img-play-pause").css("display", "none");
+        $("#cb-exec-img-play-1"    ).css("display", "inline");
+        $("#cb-exec-img-pause"     ).css("display", "none");
+        $("#cb-exec-img-play-pause").css("display", "none");
     } else if (isAnimating) {
-        $("#exec-img-play-1"    ).css("display", "none");
-        $("#exec-img-pause"     ).css("display", "inline");
-        $("#exec-img-play-pause").css("display", "none");
+        $("#cb-exec-img-play-1"    ).css("display", "none");
+        $("#cb-exec-img-pause"     ).css("display", "inline");
+        $("#cb-exec-img-play-pause").css("display", "none");
     } else {
-        $("#exec-img-play-1"    ).css("display", "none");
-        $("#exec-img-pause"     ).css("display", "none");
-        $("#exec-img-play-pause").css("display", "inline");
+        $("#cb-exec-img-play-1"    ).css("display", "none");
+        $("#cb-exec-img-pause"     ).css("display", "none");
+        $("#cb-exec-img-play-pause").css("display", "inline");
     }
 
     // Update step counter
@@ -581,7 +581,7 @@ CodeBoot.prototype.enterMode = function (newMode) {
         if (isAnimating || isStepping) {
             cb.showStepCounter(cb.programState.rte.step_count);
         } else {
-            var counter = $('<span class="badge badge-primary badge-pill step-counter"/>');
+            var counter = $('<span class="badge badge-primary badge-pill cb-step-counter"/>');
             counter.text(cb.textStepCounter());
             cb.transcript.addLineWidget(counter.get(0));
             cb.hideStepCounter();
