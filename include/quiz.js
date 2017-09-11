@@ -1,5 +1,6 @@
-/*---------------------------------------------------------------------------*/
+cb.quizUrl = 'http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/';
 
+/*---------------------------------------------------------------------------*/
 /* Get student and document information from Studium */
 
 function stringToDict(str, sep) {
@@ -56,6 +57,13 @@ function getContextInfo() {
            };
 }
 
+
+function b64DecodeUnicode(str) {
+    return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
+
 /*---------------------------------------------------------------------------*/
 
 var quizHTML = '<div id="cb-quiz" class="d-flex justify-content-between">\
@@ -104,13 +112,19 @@ CodeBoot.prototype.currentQuestion = 0;
 
 CodeBoot.prototype.loadCurrentQuestion = function() {
     var q = cb.quizQuestions[cb.currentQuestion];
-    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/ask.cgi', {
-        quiz: cb.currentQuiz,
-        q: q,
-        student: cb.getStudentName()
-    }, function(data) {
-        $('#cb-quiz-current-question').text(q + ': ' + data);
-    }, "text");
+    $.ajax({
+        url: cb.quizUrl + '/quiz/ask.cgi',
+        data: {
+            quiz: cb.currentQuiz,
+            q: q,
+            student: cb.getStudentName()
+        },
+        jsonp: 'callback',
+        dataType: 'jsonp',
+        success: function(data) {
+            $('#cb-quiz-current-question').text(q + ': ' + b64DecodeUnicode(data));
+        }
+    });
 
     $('#cb-quiz-input').val(cb.quizAnswers[cb.currentQuestion] || '');
 };
@@ -149,29 +163,34 @@ CodeBoot.prototype.submitAnswer = function() {
     var q = cb.quizQuestions[cb.currentQuestion];
 
     $('#cb-quiz-input').focus();
+    $.ajax({
+        url: cb.quizUrl + '/quiz/valid.cgi',
+        data: {
+            quiz: cb.currentQuiz,
+            q: q,
+            student: cb.getStudentName(),
+            answer: $('#cb-quiz-input').val()
+        },
+        jsonp: 'callback',
+        dataType: 'jsonp',
+        success: function(data) {
+            var ok = b64DecodeUnicode(data).trim() === '1';
+            if(ok) {
+                cb.quizAnswers[cb.currentQuestion] = $('#cb-quiz-input').val();
 
-    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/valid.cgi', {
-        quiz: cb.currentQuiz,
-        q: q,
-        student: cb.getStudentName(),
-        answer: $('#cb-quiz-input').val()
-    }, function(data) {
-        var ok = data.trim() === '1';
-        if(ok) {
-            cb.quizAnswers[cb.currentQuestion] = $('#cb-quiz-input').val();
+                $('.state', '#cb-question-' + cb.currentQuestion).text('\u2713');
 
-            $('.state', '#cb-question-' + cb.currentQuestion).text('\u2713');
+                $('#cb-quiz-input').removeClass('is-invalid')
+                                   .addClass('is-valid')
+                                   .val('');
 
-            $('#cb-quiz-input').removeClass('is-invalid')
-                               .addClass('is-valid')
-                               .val('');
-
-            cb.nextQuestion();
-        } else {
-            console.log(data);
-            $('#cb-quiz-input').removeClass('is-invalid').addClass('is-invalid');
+                cb.nextQuestion();
+            } else {
+                console.log(data);
+                $('#cb-quiz-input').removeClass('is-invalid').addClass('is-invalid');
+            }
         }
-    }, "text");
+    });
 };
 
 CodeBoot.prototype.setupQuiz = function (name) {
@@ -183,55 +202,70 @@ CodeBoot.prototype.setupQuiz = function (name) {
 
     var quiz = $(quizHTML);
 
-    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/quiz/' + name + '/title', {}, function(data) {
-        $('#cb-quiz-title', quiz).text(data);
+    $.ajax({
+        url: cb.quizUrl + '/quiz/title.cgi',
+        data: {
+            quiz: name
+        },
+        jsonp: 'callback',
+        dataType: 'jsonp',
+        success: function(data) {
+            $('#cb-quiz-title', quiz).text(b64DecodeUnicode(data));
+        }
     });
 
     // Load questions
-    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/questions.cgi', {
-        quiz: name
-    }, function(data) {
-        cb.quizQuestions = data.trim().split('\n');
+    $.ajax({
+        url: cb.quizUrl + '/quiz/questions.cgi',
+        data: {
+            quiz: name
+        },
+        jsonp: 'callback',
+        dataType: 'jsonp',
+        success: function(data) {
+            data = b64DecodeUnicode(data);
+            cb.quizQuestions = data.trim().split('\n');
 
-        cb.quizAnswers = cb.quizQuestions.map(function() { return false });
+            cb.quizAnswers = cb.quizQuestions.map(function() { return false });
 
-        cb.quizQuestions.forEach(function(question, i) {
-            var q = $(questionHTML);
+            cb.quizQuestions.forEach(function(question, i) {
+                var q = $(questionHTML);
 
-            q.attr('id', 'cb-question-' + i);
+                q.attr('id', 'cb-question-' + i);
 
-            $('input', q).attr('value', i);
+                $('input', q).attr('value', i);
 
-            $('.title', q).text(question);
+                $('.title', q).text(question);
 
-            if(i === 0) {
-                $('input', q).prop('checked', true);
-                q.addClass('active');
-            }
+                if(i === 0) {
+                    $('input', q).prop('checked', true);
+                    q.addClass('active');
+                }
 
-            $('#cb-quiz-question-choice', quiz).append(q);
-        })
+                $('#cb-quiz-question-choice', quiz).append(q);
+            });
 
-        $(document).on('change', 'input:radio[name=cb-current-quiz-question]', function (event) {
-            cb.loadQuestion(+$(this).val());
-        });
+            $(document).on('change', 'input:radio[name=cb-current-quiz-question]', function (event) {
+                cb.loadQuestion(+$(this).val());
+            });
 
-        $("body").attr("data-cb-theme", "quiz");
+            $("body").attr("data-cb-theme", "quiz");
 
-        $("#cb-navbar-header").html(quiz);
+            $("#cb-navbar-header").html(quiz);
 
-        $("#cb-quiz-student-name").text("pour " + studentName);
+            $("#cb-quiz-student-name").text("pour " + studentName);
 
-        $('#cb-quiz-form').submit(function() {
-            cb.submitAnswer();
-            return false;
-        });
+            $('#cb-quiz-form').submit(function() {
+                cb.submitAnswer();
+                return false;
+            });
 
-        $('#cb-quiz-pass').click(function() {
-            cb.nextQuestion();
-        });
-        // Load the first question
-        cb.loadCurrentQuestion();
+            $('#cb-quiz-pass').click(function() {
+                cb.nextQuestion();
+            });
+            // Load the first question
+            cb.loadCurrentQuestion();
+        }
     });
 };
 
@@ -248,23 +282,38 @@ CodeBoot.prototype.installQuiz = function() {
     // Add quiz menu
     var quizMenu = document.createElement('span');
     quizMenu.innerHTML = quizMenuHTML;
-    document.getElementById('cb-menu').appendChild(quizMenu); 
+    document.getElementById('cb-menu').appendChild(quizMenu);
 
     // Load questions
-    $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/list.cgi', {}, function(data) {
-        data.trim().split('\n').forEach(function(name) {
-            var element = $('<a class="dropdown-item" href="#"></a>');
+    $.ajax({
+        url: cb.quizUrl + '/quiz/list.cgi',
+        data: {},
+        jsonp: 'callback',
+        dataType: 'jsonp',
+        success: function(data) {
+            data = b64DecodeUnicode(data);
+            data.trim().split('\n').forEach(function(name) {
+                var element = $('<a class="dropdown-item" href="#"></a>');
 
-            element.click(function() {
-                cb.setupQuiz(name);
+                element.click(function() {
+                    cb.setupQuiz(name);
+                });
+
+                $.ajax({
+                    url: cb.quizUrl + '/quiz/title.cgi',
+                    data: {
+                        quiz: name
+                    },
+                    jsonp: 'callback',
+                    dataType: 'jsonp',
+                    success: function(data) {
+                        element.text(b64DecodeUnicode(data));
+                     }
+                });
+
+                $('#cb-quiz-list').append(element);
             });
-
-            $.get('http://www-labs.iro.umontreal.ca/~codeboot/codeboot2/quiz/quiz/' + name + '/title', {}, function(data) {
-                element.text(data);
-            });
-
-            $('#cb-quiz-list').append(element);
-        });
+        }
     });
 };
 

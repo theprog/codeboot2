@@ -16,4 +16,4 @@ echo "Content-type: text/plain"
 echo
 
 cd quiz/$post_quiz/
-ls -d */ | sed 's,/$,,' | jsonp
+jsonp < title

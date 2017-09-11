@@ -15,5 +15,5 @@ echo ""
 if test -e quiz/$post_quiz/$post_q/ask.sh
 then
     cd quiz/$post_quiz/$post_q
-    ./ask.sh "$post_student"
+    ./ask.sh "$post_student" | jsonp
 fi
