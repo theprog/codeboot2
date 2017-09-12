@@ -110,7 +110,7 @@ CodeBoot.prototype.quizAnswers = [];
 CodeBoot.prototype.currentQuestion = 0;
 
 
-CodeBoot.prototype.loadCurrentQuestion = function() {
+CodeBoot.prototype.loadCurrentQuestion = function(onSuccess = null) {
     var q = cb.quizQuestions[cb.currentQuestion];
     $.ajax({
         url: cb.quizUrl + '/quiz/ask.cgi',
@@ -123,6 +123,7 @@ CodeBoot.prototype.loadCurrentQuestion = function() {
         dataType: 'jsonp',
         success: function(data) {
             $('#cb-quiz-current-question').text(q + ': ' + b64DecodeUnicode(data));
+            if(onSuccess) onSuccess();
         }
     });
 
@@ -135,8 +136,10 @@ CodeBoot.prototype.loadQuestion = function(n) {
 
         $('#cb-quiz-input').removeClass('is-valid').removeClass('is-invalid');
 
-        cb.loadCurrentQuestion();
-        $(this).fadeIn('fast');
+        cb.loadCurrentQuestion(function () {
+            $(this).fadeIn('fast');
+        }.bind(this));
+
     });
 };
 
